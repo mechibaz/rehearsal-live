@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rehearsal Live</title>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F6F9FC;--surface:#ffffff;--surface2:#eef1f5;--border:#d0d6e0;--border-strong:#95A4BA;
+  --text:#061B31;--muted:#50617A;--faint:#95A4BA;
+  --accent:#533AFD;--accent-light:#ede9ff;--accent-dark:#3a26c4;
+  --tag-design-bg:#ede9ff;--tag-design:#3a26c4;
+  --tag-content-bg:#d8f5ea;--tag-content:#0a6640;
+  --tag-speaker-bg:#fde8f0;--tag-speaker:#8a1a44;
+  --tag-script-bg:#fff3e0;--tag-script:#7a3e00;
+  --tag-demo-bg:#e0f0ff;--tag-demo:#0a4a8a;
+  --tag-timing-bg:#fff0d4;--tag-timing:#7a4a00;
+  --tag-general-bg:#eef1f5;--tag-general:#50617A;
+}
+body{font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+
+/* SCREENS */
+.screen{display:none;min-height:100vh}
+.screen.active{display:flex}
+
+/* ── LOBBY ── */
+#screen-lobby{flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;gap:0;background:var(--bg)}
+.lobby-logo{font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:12px;letter-spacing:0.12em;color:var(--accent);margin-bottom:48px;font-weight:500}
+.lobby-card{background:var(--surface);border:0.5px solid var(--border);border-radius:16px;padding:36px 40px;width:100%;max-width:460px}
+.lobby-card h1{font-size:22px;font-weight:600;margin-bottom:6px}
+.lobby-card p{font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.6}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:10px 14px;border:1px solid var(--border-strong);border-radius:8px;font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:14px;background:var(--bg);color:var(--text);outline:none;transition:border-color 0.15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--text);background:var(--surface)}
+.field input::placeholder{color:var(--faint)}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--faint);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:0.5px;background:var(--border)}
+.btn-primary{width:100%;padding:12px;border-radius:8px;border:none;background:var(--accent);color:#ffffff;font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:opacity 0.15s}
+.btn-primary:hover{opacity:0.82}
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed}
+.btn-secondary{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border-strong);background:transparent;color:var(--text);font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:14px;font-weight:400;cursor:pointer;transition:all 0.15s;margin-bottom:10px}
+.btn-secondary:hover{background:var(--surface2)}
+.lobby-error{font-size:12px;color:#c0392b;margin-top:8px;display:none}
+
+/* ── NAME GATE ── */
+#screen-name{flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+.name-card{background:var(--surface);border:0.5px solid var(--border);border-radius:16px;padding:36px 40px;width:100%;max-width:400px}
+.name-card h1{font-size:20px;font-weight:600;margin-bottom:6px}
+.name-card p{font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6}
+
+/* ── MAIN APP ── */
+#screen-app{flex-direction:column;height:100vh;overflow:hidden}
+.topbar{background:#061B31;color:#f6f5f1;padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:16px}
+.topbar-left{display:flex;align-items:center;gap:14px;min-width:0}
+.topbar-logo{font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:11px;letter-spacing:0.1em;opacity:0.6;flex-shrink:0}
+.topbar-title{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0.9}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.reviewer-badge{font-size:11px;background:rgba(246,245,241,0.12);border:1px solid rgba(246,245,241,0.2);border-radius:99px;padding:4px 12px;color:rgba(246,245,241,0.8)}
+.topbar-btn{font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:11px;padding:6px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.25);background:transparent;color:rgba(255,255,255,0.85);cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.topbar-btn:hover{background:rgba(246,245,241,0.1);border-color:rgba(246,245,241,0.5)}
+
+.app-body{display:flex;flex:1;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:290px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-head{padding:12px 14px 8px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sidebar-label{font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:10px;letter-spacing:0.1em;color:var(--faint);text-transform:uppercase}
+.slides-list{flex:1;overflow-y:auto;padding:8px}
+.slide-item{border-radius:8px;overflow:hidden;cursor:pointer;margin-bottom:7px;border:1.5px solid transparent;transition:all 0.12s;background:var(--surface2);position:relative}
+.slide-item:hover{border-color:var(--border-strong)}
+.slide-item.active{border-color:var(--accent)}
+.slide-item img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover}
+.slide-item-foot{padding:3px 6px;display:flex;align-items:center;justify-content:space-between}
+.slide-num-lbl{font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:9px;color:var(--faint)}
+.slide-badge{font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:9px;background:var(--accent);color:#fff;border-radius:99px;padding:1px 5px}
+
+/* MAIN PANEL */
+.main-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+.stats-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 20px;display:flex;gap:20px;align-items:center;flex-shrink:0;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column}
+.stat-val{font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:17px;font-weight:500;color:var(--text);line-height:1}
+.stat-lbl{font-size:9px;color:var(--faint);letter-spacing:0.06em;text-transform:uppercase;margin-top:2px}
+.stats-spacer{flex:1}
+.filter-row{display:flex;gap:5px;flex-wrap:wrap}
+.filter-btn{font-size:11px;font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-weight:500;padding:4px 11px;border-radius:99px;border:1px solid var(--border-strong);background:var(--surface);color:var(--muted);cursor:pointer;transition:all 0.12s}
+.filter-btn:hover{border-color:var(--muted);color:var(--text)}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.table-wrap{flex:1;overflow:auto;padding:20px}
+table{width:100%;border-collapse:collapse;background:var(--surface);border-radius:10px;overflow:hidden;border:1px solid var(--border);font-size:13px}
+thead th{background:#eef1f5;font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--faint);padding:9px 13px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surface2)}
+tbody tr.new-row{animation:flashIn 0.5s ease}
+@keyframes flashIn{0%{background:#e8ffe8}100%{background:transparent}}
+td{padding:9px 13px;vertical-align:top}
+.thumb-cell{width:200px}
+.thumb-cell img{width:184px;aspect-ratio:16/9;object-fit:cover;border-radius:6px;border:1px solid var(--border);display:block}
+.thumb-cell .snum{font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:9px;color:var(--faint);margin-top:3px}
+.tag-pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:99px;letter-spacing:0.04em;text-transform:uppercase}
+.comment-text{font-size:13px;color:var(--text);line-height:1.5;min-width:220px}
+.author-chip{display:flex;align-items:center;gap:7px;white-space:nowrap}
+.avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;flex-shrink:0}
+.author-name{font-size:12px;font-weight:500;color:var(--text)}
+.ts{font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:10px;color:var(--faint)}
+.del-btn{background:none;border:none;cursor:pointer;color:var(--faint);padding:2px 5px;border-radius:4px;font-size:13px}
+.del-btn:hover{color:#c0392b;background:#fde8e8}
+.empty-row td{text-align:center;padding:40px;color:var(--faint);font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:11px}
+
+/* INPUT BAR */
+.input-bar{background:var(--surface);border-top:1px solid var(--border);padding:12px 20px;display:flex;gap:10px;align-items:flex-start;flex-shrink:0}
+.input-preview{width:120px;flex-shrink:0}
+.input-preview img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:4px;border:1px solid var(--border);display:block}
+.input-preview .no-slide{width:100%;aspect-ratio:16/9;background:var(--surface2);border-radius:4px;border:1.5px dashed var(--border-strong);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--faint)}
+.input-main{flex:1;display:flex;flex-direction:column;gap:7px}
+.input-top{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.input-select{font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:12px;padding:6px 10px;border-radius:6px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text);cursor:pointer;outline:none}
+.input-select:focus{border-color:var(--text)}
+.input-textarea{font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:13px;padding:8px 12px;border-radius:6px;border:1px solid var(--border-strong);background:var(--bg);color:var(--text);outline:none;resize:none;width:100%;line-height:1.5;transition:border-color 0.15s}
+.input-textarea:focus{border-color:var(--text);background:var(--surface)}
+.input-textarea::placeholder{color:var(--faint)}
+.input-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end}
+.submit-btn{font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:13px;font-weight:500;padding:8px 18px;border-radius:6px;border:none;background:var(--accent);color:#ffffff;cursor:pointer;transition:opacity 0.15s;white-space:nowrap}
+.submit-btn:hover{opacity:0.82}
+.submit-btn:disabled{opacity:0.4;cursor:not-allowed}
+
+/* ADMIN UPLOAD */
+.upload-bar{background:#eef1f5;border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.upload-bar-label{font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--faint)}
+.upload-btn{font-size:12px;padding:6px 14px;border-radius:6px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text);cursor:pointer;font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;transition:all 0.15s}
+.upload-btn:hover{background:var(--surface2)}
+.upload-hint{font-size:11px;color:var(--faint)}
+.drop-active{background:#e8f5e9!important;border-color:#22c55e!important}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:13px;padding:10px 20px;border-radius:99px;opacity:0;transition:opacity 0.2s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1}
+
+/* UPLOAD MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(26,25,22,0.5);z-index:200;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border-radius:12px;padding:28px 32px;width:480px;max-width:90vw}
+.modal h2{font-size:16px;font-weight:600;margin-bottom:6px}
+.modal p{font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6}
+.modal textarea{width:100%;height:140px;font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:11px;border:1px solid var(--border-strong);border-radius:6px;padding:10px;background:var(--bg);color:var(--text);resize:none;outline:none}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.modal-cancel{font-size:13px;padding:8px 16px;border-radius:6px;border:1px solid var(--border-strong);background:transparent;cursor:pointer;color:var(--muted);font-family:'Helvetica Neue', Helvetica, Arial, sans-serif}
+.modal-ok{font-size:13px;padding:8px 16px;border-radius:6px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-weight:500}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:99px}
+
+.reactions{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.reaction-btn{font-size:12px;padding:3px 9px;border-radius:99px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all 0.12s;display:flex;align-items:center;gap:4px;color:var(--muted);font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}
+.reaction-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.reaction-btn.reacted{border-color:var(--accent);color:var(--accent);background:var(--accent-light);font-weight:500}
+.reaction-count{font-size:11px;font-weight:500}
+
+/* CONSOLIDATED VIEW */
+.consolidated-overlay{display:none;position:fixed;inset:0;background:rgba(6,27,49,0.6);z-index:300;align-items:flex-start;justify-content:center;padding:32px 16px;overflow-y:auto}
+.consolidated-overlay.open{display:flex}
+.consolidated-panel{background:var(--surface);border-radius:16px;width:100%;max-width:900px;overflow:hidden;margin:auto}
+.consolidated-header{background:#061B31;color:#fff;padding:20px 28px;display:flex;align-items:center;justify-content:space-between}
+.consolidated-header h2{font-size:16px;font-weight:500;letter-spacing:0.04em;margin:0}
+.consolidated-header-right{display:flex;align-items:center;gap:10px}
+.consolidated-close{background:none;border:1px solid rgba(255,255,255,0.25);color:rgba(255,255,255,0.8);border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}
+.consolidated-close:hover{background:rgba(255,255,255,0.1)}
+.slide-block{border-bottom:1px solid var(--border);padding:24px 28px}
+.slide-block:last-child{border-bottom:none}
+.slide-block-header{display:flex;gap:20px;align-items:flex-start;margin-bottom:16px}
+.slide-block-thumb{width:200px;flex-shrink:0;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.slide-block-thumb img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover}
+.slide-block-thumb .no-thumb{width:100%;aspect-ratio:16/9;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--faint)}
+.slide-block-meta{flex:1}
+.slide-block-num{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px}
+.slide-block-title{font-size:16px;font-weight:500;color:var(--text);margin-bottom:10px}
+.slide-block-stats{display:flex;gap:8px;flex-wrap:wrap}
+.slide-stat-pill{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:500}
+.consolidated-comments{display:flex;flex-direction:column;gap:8px}
+.con-comment{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:8px;background:var(--bg)}
+.con-comment-body{flex:1}
+.con-comment-top{display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap}
+.con-author{font-size:12px;font-weight:500;color:var(--text)}
+.con-time{font-size:11px;color:var(--faint)}
+.con-text{font-size:13px;color:var(--muted);line-height:1.5}
+.no-comments-note{font-size:12px;color:var(--faint);font-style:italic}
+
+.inline-select{font-size:11px;padding:2px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;outline:none;max-width:110px;margin-top:3px}
+.inline-select:focus{border-color:var(--accent)}
+.edit-btn{font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;margin-top:4px;display:block;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}
+.edit-btn:hover{text-decoration:underline}
+.edit-textarea{width:100%;font-size:13px;padding:6px 8px;border-radius:6px;border:1px solid var(--accent);background:var(--surface);color:var(--text);resize:vertical;outline:none;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;min-height:60px;line-height:1.5}
+.save-edit-btn{font-size:11px;padding:4px 10px;border-radius:4px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}
+.cancel-edit-btn{font-size:11px;padding:4px 10px;border-radius:4px;border:1px solid var(--border-strong);background:transparent;color:var(--muted);cursor:pointer;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}
+.p0-btn.active{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+.p1-btn.active{background:#fff3e0;color:#7a3e00;border-color:#fcd34d}
+.comment-display{line-height:1.5}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- EXPORT MODAL -->
+<div class="modal-bg" id="export-modal">
+  <div class="modal">
+    <h2>Export feedback report</h2>
+    <p>Copy this and paste into a doc or email.</p>
+    <textarea id="export-text" readonly></textarea>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeExport()">Close</button>
+      <button class="modal-ok" onclick="copyExport()">Copy to clipboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── SCREEN: LOBBY ── -->
+<div id="screen-lobby" class="screen active">
+  <div class="lobby-logo">REHEARSAL // LIVE</div>
+  <div class="lobby-card">
+    <h1>Join or start a session</h1>
+    <p>Start a new rehearsal session as the presenter, or join an existing one with a session code.</p>
+
+    <div class="field">
+      <label>Your name</label>
+      <input type="text" id="lobby-name" placeholder="e.g. Mercedes" autocomplete="off"/>
+    </div>
+    <div class="field">
+      <label>Session title</label>
+      <input type="text" id="lobby-title" placeholder="e.g. Q3 All-Hands Rehearsal" autocomplete="off"/>
+    </div>
+
+    <button class="btn-primary" onclick="startNew()" id="btn-new">Start new session (presenter)</button>
+    <div style="margin-top:10px;font-size:11px;color:var(--faint);text-align:center">You'll upload slides and share a code with your team</div>
+
+    <div class="divider">or join existing</div>
+
+    <div class="field">
+      <label>Session code</label>
+      <input type="text" id="lobby-code" placeholder="e.g. SUNSET-42" autocomplete="off" style="text-transform:uppercase;letter-spacing:0.08em;font-family:'Helvetica Neue', Helvetica, Arial, sans-serif"/>
+    </div>
+    <button class="btn-secondary" onclick="joinSession()">Join session →</button>
+    <div class="lobby-error" id="lobby-error">Session not found. Check the code and try again.</div>
+  </div>
+</div>
+
+<!-- ── SCREEN: MAIN APP ── -->
+<div id="screen-app" class="screen">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-logo">REHEARSAL //</span>
+      <span class="topbar-title" id="app-title">Untitled session</span>
+    </div>
+    <div class="topbar-right">
+      <div class="live-dot" title="Live"></div>
+      <span class="reviewer-badge" id="app-reviewer"></span>
+      <span style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:11px;color:rgba(246,245,241,0.45);letter-spacing:0.06em" id="app-code"></span>
+      <button class="topbar-btn" id="share-btn" onclick="copyShareLink()" style="display:none">Copy join link</button>
+      <button class="topbar-btn" onclick="openConsolidated()">⊞ Full view</button><button class="topbar-btn" onclick="openExport()">↓ Export</button>
+    </div>
+  </div>
+
+  <div class="app-body">
+    <aside class="sidebar">
+      <div class="sidebar-head">
+        <span class="sidebar-label">Slides</span>
+        <span class="sidebar-label" id="slide-count">0</span>
+      </div>
+      <div class="slides-list" id="slides-list"></div>
+    </aside>
+
+    <div class="main-panel">
+      <!-- admin upload bar -->
+      <div class="upload-bar" id="upload-bar" style="display:none">
+        <span class="upload-bar-label">Admin</span>
+        <label class="upload-btn" id="upload-label">
+          ↑ Upload slides (PNG/JPG)
+          <input type="file" id="file-input" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files)"/>
+        </label>
+        <span class="upload-hint" id="upload-hint">Export from Keynote → File → Export → Images</span>
+      </div>
+
+      <div class="stats-bar">
+        <div class="stat"><span class="stat-val" id="stat-slides">0</span><span class="stat-lbl">Slides</span></div>
+        <div class="stat"><span class="stat-val" id="stat-comments">0</span><span class="stat-lbl">Comments</span></div>
+        <div class="stat"><span class="stat-val" id="stat-flagged">0</span><span class="stat-lbl">Slides flagged</span></div>
+        <div class="stats-spacer"></div>
+        <div class="filter-row">
+          <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+          <button class="filter-btn" onclick="setFilter('production',this)">Production</button>
+          <button class="filter-btn" onclick="setFilter('script',this)">Script</button>
+          <button class="filter-btn" onclick="setFilter('slides',this)">Slides</button>
+          <button class="filter-btn" onclick="setFilter('demo',this)">Demo</button>
+          <button class="filter-btn" onclick="setFilter('speaker',this)">Speaker</button>
+          <button class="filter-btn p0-btn" onclick="setFilter('p0',this)">P0</button>
+          <button class="filter-btn p1-btn" onclick="setFilter('p1',this)">P1</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="feedback-table">
+          <thead>
+            <tr>
+              <th>Slide</th>
+              <th>Category</th>
+              <th>Priority</th>
+              <th>Feedback</th>
+              <th>Reviewer</th>
+              <th>Time</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+
+      <div class="input-bar">
+        <div class="input-preview" id="input-preview"><div class="no-slide">no slide</div></div>
+        <div class="input-main">
+          <div class="input-top">
+            <select class="input-select" id="slide-select" onchange="updatePreview()">
+              <option value="">— select slide —</option>
+            </select>
+            <select class="input-select" id="tag-select">
+              <option value="production">Production</option>
+              <option value="script">Script</option>
+              <option value="slides">Slides</option>
+              <option value="demo">Demo</option>
+              <option value="speaker">Speaker</option>
+            </select>
+            <select class="input-select" id="priority-select">
+              <option value="p2">P2 — Normal</option>
+              <option value="p1">P1 — High</option>
+              <option value="p0">P0 — Critical</option>
+            </select>
+          </div>
+          <textarea class="input-textarea" id="comment-input" rows="2" placeholder="Type feedback here… (Enter to submit)"></textarea>
+          <div class="input-actions">
+            <button class="submit-btn" onclick="submitComment()" id="submit-btn">Add feedback</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPA_URL = 'https://qvgteedgyosthctnxsjx.supabase.co';
+const SUPA_KEY = 'sb_publishable_1rOnXJo-9lYsZL7ILjBUYA_DHGC91kh';
+
+const TAG_META = {
+  production: {label:'Production', bg:'#ede9ff',color:'#3a26c4'},
+  script:     {label:'Script',     bg:'#fff3e0',color:'#7a3e00'},
+  slides:     {label:'Slides',     bg:'#d8f5ea',color:'#0a6640'},
+  demo:       {label:'Demo',       bg:'#e0f0ff',color:'#0a4a8a'},
+  speaker:    {label:'Speaker',    bg:'#fde8f0',color:'#8a1a44'},
+};
+
+const PRIORITY_META = {
+  p0: {label:'P0', bg:'#fee2e2', color:'#991b1b'},
+  p1: {label:'P1', bg:'#fff3e0', color:'#7a3e00'},
+  p2: {label:'P2', bg:'#eef1f5', color:'#50617A'},
+};
+const AVATAR_COLORS=[
+  {bg:'#e8e4ff',color:'#4136a8'},{bg:'#d8f5ea',color:'#0a6640'},
+  {bg:'#fde8f0',color:'#8a1a44'},{bg:'#e0f0ff',color:'#0a4a8a'},
+  {bg:'#fff0d4',color:'#7a4a00'},{bg:'#f5e8ff',color:'#5a1a8a'},
+  {bg:'#d8f0ff',color:'#0a5a7a'}
+];
+const nameColorMap={};let colorIdx=0;
+function getColor(name){if(!nameColorMap[name]){nameColorMap[name]=AVATAR_COLORS[colorIdx%AVATAR_COLORS.length];colorIdx++;}return nameColorMap[name];}
+function initials(n){return(n||'?').trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2);}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+let sessionId=null,sessionTitle='',reviewer='',isAdmin=false;
+let slides=[],comments=[],activeFilter='all';
+let pollingInterval=null;
+
+// ── SUPABASE REST (raw fetch) ─────────────────────────────────────────────
+const HEADERS = {
+  'apikey': SUPA_KEY,
+  'Authorization': 'Bearer ' + SUPA_KEY,
+  'Content-Type': 'application/json',
+  'Prefer': 'return=representation'
+};
+
+// ── REACTIONS (defined early so renderTable can call it) ──────────────────
+const REACTIONS=[
+  {key:'👍',label:'Agree'},
+  {key:'💯',label:'100%'},
+  {key:'❗',label:'Important'},
+  {key:'🤔',label:'Unsure'},
+];
+const reactionsMap={};
+function getReactions(cid){if(!reactionsMap[cid])reactionsMap[cid]={};return reactionsMap[cid];}
+
+function toggleReaction(btn,cid,emoji){
+  const r=getReactions(cid);
+  if(!r[emoji])r[emoji]=new Set();
+  if(r[emoji].has(reviewer))r[emoji].delete(reviewer);
+  else r[emoji].add(reviewer);
+  // update just the reactions div, no full re-render needed
+  const wrap=btn.closest('.reactions');
+  if(wrap) wrap.outerHTML=reactionHTML(cid);
+}
+
+function reactionHTML(cid){
+  const r=getReactions(cid);
+  const btns=REACTIONS.map(function(rx){
+    const set=r[rx.key]||new Set();
+    const count=set.size;
+    const cls=set.has(reviewer)?'reaction-btn reacted':'reaction-btn';
+    const cnt=count?'<span class="reaction-count">'+count+'</span>':'';
+    const oc='toggleReaction(this,`'+cid+'`,`'+rx.key+'`)';
+    return '<button class="'+cls+'" onclick="'+oc+'">'+rx.key+cnt+'</button>';
+  }).join('');
+  return '<div class="reactions">'+btns+'</div>';
+}
+
+async function sbGet(table, queryFn){
+  let url = SUPA_URL + '/rest/v1/' + table + '?select=*';
+  if(queryFn) url = queryFn(url);
+  const r = await fetch(url, {headers: HEADERS});
+  if(!r.ok){ console.error('sbGet failed', r.status, await r.text()); return []; }
+  return r.json();
+}
+async function sbPost(table, body){
+  const r = await fetch(SUPA_URL + '/rest/v1/' + table, {
+    method: 'POST', headers: HEADERS, body: JSON.stringify(body)
+  });
+  const txt = await r.text();
+  if(!r.ok){ console.error('sbPost failed', r.status, txt); return null; }
+  try{ return JSON.parse(txt); } catch(e){ return []; }
+}
+async function sbPatch(table, match, body){
+  const key = Object.keys(match)[0];
+  const val = match[key];
+  const r = await fetch(SUPA_URL + '/rest/v1/' + table + '?' + key + '=eq.' + encodeURIComponent(val), {
+    method: 'PATCH', headers: HEADERS, body: JSON.stringify(body)
+  });
+  if(!r.ok) console.error('sbPatch failed', r.status, await r.text());
+}
+async function sbDelete(table, match){
+  const key = Object.keys(match)[0];
+  const val = match[key];
+  const r = await fetch(SUPA_URL + '/rest/v1/' + table + '?' + key + '=eq.' + encodeURIComponent(val), {
+    method: 'DELETE', headers: HEADERS
+  });
+  if(!r.ok) console.error('sbDelete failed', r.status, await r.text());
+}
+
+// ── SESSION CODE ──────────────────────────────────────────────────────────
+function makeCode(){
+  const words=['ALPHA','BRAVO','DELTA','ECHO','FOXTROT','GAMMA','INDIGO','KILO','LIMA','NOVA','OSCAR','ROMEO','SIERRA','TANGO','VICTOR','ZULU'];
+  return words[Math.floor(Math.random()*words.length)]+'-'+Math.floor(10+Math.random()*89);
+}
+
+// ── LOBBY ─────────────────────────────────────────────────────────────────
+async function startNew(){
+  const name=document.getElementById('lobby-name').value.trim();
+  const title=document.getElementById('lobby-title').value.trim() || 'Rehearsal Session';
+  if(!name){toast('Enter your name first');document.getElementById('lobby-name').focus();return;}
+  const btn=document.getElementById('btn-new');
+  btn.disabled=true;btn.textContent='Creating…';
+  const code=makeCode();
+  const res=await sbPost('sessions',{id:code,title,slides:[]});
+  if(res&&res.length&&res[0]){
+    sessionId=code;sessionTitle=title;reviewer=name;isAdmin=true;
+    enterApp();
+  } else {
+    toast('Could not create session — check console for details');
+    console.error('Session create failed — res was:', JSON.stringify(res));
+    btn.disabled=false;btn.textContent='Start new session (presenter)';
+  }
+}
+
+async function joinSession(){
+  const code=document.getElementById('lobby-code').value.trim().toUpperCase();
+  const name=document.getElementById('lobby-name').value.trim();
+  if(!name){toast('Enter your name first');return;}
+  if(!code){toast('Enter a session code');return;}
+  const err=document.getElementById('lobby-error');
+  err.style.display='none';
+  const res=await sbGet('sessions',url=>url+'&id=eq.'+encodeURIComponent(code));
+  if(res&&res.length){
+    sessionId=code;sessionTitle=res[0].title;reviewer=name;isAdmin=false;
+    slides=res[0].slides||[];
+    enterApp();
+  } else {
+    console.error('Join failed — response:',res);
+    err.style.display='block';
+  }
+}
+
+function enterApp(){
+  document.getElementById('screen-lobby').classList.remove('active');
+  document.getElementById('screen-app').classList.add('active');
+  document.getElementById('app-title').textContent=sessionTitle;
+  document.getElementById('app-reviewer').textContent=reviewer;
+  document.getElementById('app-code').textContent=sessionId;
+  if(isAdmin){
+    document.getElementById('upload-bar').style.display='flex';
+    document.getElementById('share-btn').style.display='';
+  }
+  // check URL params for auto-join
+  loadComments();
+  startPolling();
+}
+
+// ── SHARE LINK ────────────────────────────────────────────────────────────
+function copyShareLink(){
+  const url=window.location.href.split('?')[0]+'?join='+sessionId;
+  navigator.clipboard.writeText(url).then(()=>toast('Link copied! Share it with your team'));
+}
+
+// auto-join from URL
+window.addEventListener('DOMContentLoaded',()=>{
+  const params=new URLSearchParams(window.location.search);
+  const join=params.get('join');
+  if(join){document.getElementById('lobby-code').value=join;}
+  document.getElementById('lobby-title').addEventListener('keydown',e=>{if(e.key==='Enter')startNew();});
+  document.getElementById('lobby-code').addEventListener('keydown',e=>{if(e.key==='Enter')joinSession();});
+  document.getElementById('comment-input').addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitComment();}
+  });
+});
+
+// ── FILE UPLOAD ───────────────────────────────────────────────────────────
+function handleFiles(files){
+  const arr=Array.from(files).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+  let loaded=0;
+  const hint=document.getElementById('upload-hint');
+  hint.textContent='Uploading…';
+  arr.forEach(f=>{
+    const reader=new FileReader();
+    reader.onload=async e=>{
+      const stableId = 's_' + f.name.replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
+      slides.push({id:stableId,src:e.target.result,name:f.name.replace(/\.[^.]+$/, '')});
+      loaded++;
+      if(loaded===arr.length){
+        await sbPatch('sessions',{id:sessionId},{slides});
+        hint.textContent=slides.length+' slides uploaded';
+        renderAll();
+      }
+    };
+    reader.readAsDataURL(f);
+  });
+}
+
+// drag-drop on upload bar
+document.addEventListener('DOMContentLoaded',()=>{
+  const ub=document.getElementById('upload-bar');
+  if(!ub)return;
+  ub.addEventListener('dragover',e=>{e.preventDefault();ub.classList.add('drop-active');});
+  ub.addEventListener('dragleave',()=>ub.classList.remove('drop-active'));
+  ub.addEventListener('drop',e=>{e.preventDefault();ub.classList.remove('drop-active');if(isAdmin)handleFiles(e.dataTransfer.files);});
+});
+
+// ── POLLING ───────────────────────────────────────────────────────────────
+async function loadComments(){
+  const res=await sbGet('comments',url=>url+'&session_id=eq.'+encodeURIComponent(sessionId)+'&order=created_at.asc');
+  if(res){comments=res;renderAll();}
+}
+
+async function pollUpdates(){
+  // poll slides if not admin
+  if(!isAdmin){
+    const res=await sbGet('sessions',url=>url.replace('select=*','select=slides')+'&id=eq.'+encodeURIComponent(sessionId));
+    if(res&&res.length&&res[0]){slides=res[0].slides||[];renderSidebar();renderSlideSelect();}
+  }
+  // poll comments
+  const res=await sbGet('comments',url=>url+'&session_id=eq.'+encodeURIComponent(sessionId)+'&order=created_at.asc');
+  if(res){
+    const prevCount=comments.length;
+    comments=res;
+    if(comments.length!==prevCount)renderAll();
+    else{updateStats();}
+  }
+}
+
+function startPolling(){
+  pollingInterval=setInterval(pollUpdates,2500);
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────
+function renderAll(){renderSidebar();renderSlideSelect();renderTable();updateStats();}
+
+function renderSidebar(){
+  document.getElementById('slide-count').textContent=slides.length;
+  const list=document.getElementById('slides-list');
+  list.innerHTML=slides.map((s,i)=>{
+    const cnt=comments.filter(c=>c.slide_id==='idx:'+i).length;
+    return`<div class="slide-item" onclick="jumpSlide(${i})" title="${escHtml(s.name)}">
+      <img src="${s.src}" alt="Slide ${i+1}"/>
+      <div class="slide-item-foot">
+        <span class="slide-num-lbl">Slide ${i+1}</span>
+        ${cnt?`<span class="slide-badge">${cnt}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderSlideSelect(){
+  const sel=document.getElementById('slide-select');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">— select slide —</option>'+
+    slides.map((s,i)=>`<option value="${i}">Slide ${i+1} — ${escHtml(s.name)}</option>`).join('');
+  if(cur)sel.value=cur;
+}
+
+function renderTable(){
+  const tbody=document.getElementById('table-body');
+  let filtered=activeFilter==='all'?comments
+    :activeFilter==='p0'||activeFilter==='p1'||activeFilter==='p2'
+      ?comments.filter(c=>c.priority===activeFilter)
+      :comments.filter(c=>c.tag===activeFilter);
+  filtered=[...filtered].sort((a,b)=>{
+    const ai=a.slide_id&&a.slide_id.startsWith('idx:')?parseInt(a.slide_id.slice(4)):999;
+    const bi=b.slide_id&&b.slide_id.startsWith('idx:')?parseInt(b.slide_id.slice(4)):999;
+    const po={'p0':0,'p1':1,'p2':2};
+    return ai-bi||(po[a.priority]??2)-(po[b.priority]??2)||new Date(a.created_at)-new Date(b.created_at);
+  });
+  if(!filtered.length){
+    tbody.innerHTML=`<tr class="empty-row"><td colspan="7">${comments.length?'No comments match this filter':'No feedback yet — be the first to add some'}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML=filtered.map(c=>{
+    const sIdx=c.slide_id&&c.slide_id.startsWith('idx:')?parseInt(c.slide_id.slice(4)):-1;
+    const s=sIdx>=0?slides[sIdx]:null;
+    const tm=TAG_META[c.tag]||{label:c.tag,bg:'#eef1f5',color:'#50617A'};
+    const pm=PRIORITY_META[c.priority||'p2'];
+    const col=getColor(c.author);
+    const time=new Date(c.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    const canEdit=isAdmin||c.author===reviewer;
+    return`<tr id="row-${c.id}">
+      <td class="thumb-cell">${s?`<img src="${s.src}" alt="Slide ${sIdx+1}"/><div class="snum">Slide ${sIdx+1}</div>`:'<span style="color:var(--faint);font-size:10px">—</span>'}</td>
+      <td>
+        <span class="tag-pill" id="tag-pill-${c.id}" style="background:${tm.bg};color:${tm.color}">${tm.label}</span>
+        ${canEdit?`<div style="margin-top:5px"><select class="inline-select" data-cid="${c.id}" data-field="tag" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">
+          ${Object.entries(TAG_META).map(([k,v])=>`<option value="${k}"${c.tag===k?' selected':''}>${v.label}</option>`).join('')}
+        </select></div>`:''}
+      </td>
+      <td>
+        <span class="tag-pill" id="pri-pill-${c.id}" style="background:${pm.bg};color:${pm.color}">${pm.label}</span>
+        ${canEdit?`<div style="margin-top:5px"><select class="inline-select" data-cid="${c.id}" data-field="priority" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">
+          ${Object.entries(PRIORITY_META).map(([k,v])=>`<option value="${k}"${(c.priority||'p2')===k?' selected':''}>${v.label}</option>`).join('')}
+        </select></div>`:''}
+      </td>
+      <td class="comment-text" id="ct-${c.id}">
+        <div class="comment-display">${escHtml(c.text)}</div>
+        ${canEdit?`<button class="edit-btn" data-cid="${c.id}">edit</button>`:''}
+        ${reactionHTML(c.id)}
+      </td>
+      <td><div class="author-chip"><div class="avatar" style="background:${col.bg};color:${col.color}">${initials(c.author)}</div><span class="author-name">${escHtml(c.author)}</span></div></td>
+      <td><span class="ts">${time}</span></td>
+      <td>${canEdit?`<button class="del-btn" data-cid="${c.id}">✕</button>`:''}</td>
+    </tr>`;
+  }).join('');
+}
+
+function updateStats(){
+  document.getElementById('stat-slides').textContent=slides.length;
+  document.getElementById('stat-comments').textContent=comments.length;
+  const validSlideComments=comments.filter(c=>c.slide_id&&c.slide_id.startsWith('idx:'));
+  document.getElementById('stat-flagged').textContent=new Set(validSlideComments.map(c=>c.slide_id)).size;
+}
+
+// ── INTERACTIONS ──────────────────────────────────────────────────────────
+function jumpSlide(idx){
+  document.getElementById('slide-select').value=idx;
+  updatePreview();
+  document.getElementById('comment-input').focus();
+}
+
+function updatePreview(){
+  const idx=document.getElementById('slide-select').value;
+  const s=idx!=='' ? slides[parseInt(idx)] : null;
+  document.getElementById('input-preview').innerHTML=s
+    ?`<img src="${s.src}" alt="preview"/>`
+    :`<div class="no-slide">no slide</div>`;
+}
+
+function setFilter(tag,el){
+  activeFilter=tag;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderTable();
+}
+
+async function submitComment(){
+  const text=document.getElementById('comment-input').value.trim();
+  const slideVal=document.getElementById('slide-select').value;
+  const tag=document.getElementById('tag-select').value;
+  if(!text){document.getElementById('comment-input').focus();return;}
+  const btn=document.getElementById('submit-btn');
+  btn.disabled=true;
+  // store slide_id as "idx:N" so it's always stable regardless of how slides are loaded
+  const slideId = slideVal ? 'idx:'+slideVal : null;
+  const priority=document.getElementById('priority-select').value;
+  const body={session_id:sessionId,slide_id:slideId,tag,text,author:reviewer,priority};
+  await sbPost('comments',body);
+  document.getElementById('comment-input').value='';
+  btn.disabled=false;
+  await loadComments();
+}
+
+async function deleteComment(id){
+  await sbDelete('comments',{id:id});
+  comments=comments.filter(c=>String(c.id)!==String(id));
+  renderAll();
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────────
+function openExport(){
+  let txt=`REHEARSAL FEEDBACK\n${sessionTitle}\nSession: ${sessionId}\n${'─'.repeat(36)}\n\n`;
+  const slideOrder={};slides.forEach((s,i)=>slideOrder[s.id]=i);
+  slides.forEach((s,i)=>{
+    const cs=comments.filter(c=>c.slide_id==='idx:'+i).sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
+    txt+=`SLIDE ${i+1} — ${s.name}\n`;
+    if(!cs.length)txt+='  (no feedback)\n';
+    else cs.forEach(c=>{
+      const tm=TAG_META[c.tag]||{label:c.tag||'general'};
+      const pm=PRIORITY_META[c.priority||'p2'];
+      const time=new Date(c.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      txt+=`  [${pm.label}][${tm.label.toUpperCase()}] ${c.author} (${time}): ${c.text}\n`;
+    });
+    txt+='\n';
+  });
+  txt+=`${'─'.repeat(36)}\nTOTAL: ${comments.length} comments across ${new Set(comments.map(c=>c.slide_id)).size} slides\n`;
+  Object.keys(TAG_META).forEach(tag=>{const n=comments.filter(c=>c.tag===tag).length;if(n)txt+=`  ${TAG_META[tag].label}: ${n}\n`;});
+  document.getElementById('export-text').value=txt;
+  document.getElementById('export-modal').classList.add('open');
+}
+function closeExport(){document.getElementById('export-modal').classList.remove('open');}
+function copyExport(){
+  const ta=document.getElementById('export-text');ta.select();document.execCommand('copy');
+  const btn=document.querySelector('.modal-ok');btn.textContent='Copied!';
+  setTimeout(()=>btn.textContent='Copy to clipboard',1800);
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('export-modal').addEventListener('click',e=>{if(e.target===document.getElementById('export-modal'))closeExport();});
+});
+
+// ── TOAST ─────────────────────────────────────────────────────────────────
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+</script>
+
+<!-- CONSOLIDATED VIEW -->
+<div class="consolidated-overlay" id="consolidated-overlay">
+  <div class="consolidated-panel">
+    <div class="consolidated-header">
+      <h2 id="con-title">Full rehearsal view</h2>
+      <div class="consolidated-header-right">
+        <button class="consolidated-close" onclick="closeConsolidated()">✕ Close</button>
+      </div>
+    </div>
+    <div id="consolidated-body"></div>
+  </div>
+</div>
+</body>
+</html>
+// ── EDIT COMMENT ──────────────────────────────────────────────────────────
+function startEdit(cid){
+  const cell=document.getElementById('ct-'+cid);
+  const c=comments.find(x=>x.id===cid);
+  if(!c)return;
+  cell.innerHTML=`<textarea class="edit-textarea" id="edit-${cid}">${escHtml(c.text)}</textarea>
+    <div style="display:flex;gap:6px;margin-top:5px">
+      <button class="save-edit-btn" onclick="saveEdit('${cid}')">Save</button>
+      <button class="cancel-edit-btn" onclick="renderTable()">Cancel</button>
+    </div>`;
+  const ta=document.getElementById('edit-'+cid);
+  ta.focus();ta.select();
+  ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();saveEdit(cid);}});
+}
+
+async function saveEdit(cid){
+  const ta=document.getElementById('edit-'+cid);
+  if(!ta)return;
+  const newText=ta.value.trim();
+  if(!newText)return;
+  const c=comments.find(x=>x.id===cid);
+  if(c)c.text=newText;
+  await sbPatch('comments',{id:cid},{text:newText});
+  renderTable();
+}
+
+async function updateCommentField(cid,field,value){
+  const c=comments.find(x=>x.id===cid);
+  if(!c)return;
+  c[field]=value;
+  if(field==='tag'){
+    const tm=TAG_META[value]||{label:value,bg:'#eef1f5',color:'#50617A'};
+    const pill=document.getElementById('tag-pill-'+cid);
+    if(pill){pill.textContent=tm.label;pill.style.background=tm.bg;pill.style.color=tm.color;}
+  }
+  if(field==='priority'){
+    const pm=PRIORITY_META[value]||PRIORITY_META.p2;
+    const pill=document.getElementById('pri-pill-'+cid);
+    if(pill){pill.textContent=pm.label;pill.style.background=pm.bg;pill.style.color=pm.color;}
+  }
+  const update={};update[field]=value;
+  await sbPatch('comments',{id:cid},update);
+}
+
+// ── CONSOLIDATED VIEW (improved) ──────────────────────────────────────────
+function openConsolidated(){
+  document.getElementById('con-title').textContent=(sessionTitle||'Rehearsal')+' — full view';
+  const body=document.getElementById('consolidated-body');
+  if(!slides.length){
+    body.innerHTML='<div style="padding:40px;text-align:center;color:var(--faint);font-size:13px;">No slides loaded yet.</div>';
+    document.getElementById('consolidated-overlay').classList.add('open');
+    return;
+  }
+  body.innerHTML=slides.map((s,i)=>{
+    const slideComments=comments
+      .filter(c=>c.slide_id==='idx:'+i)
+      .sort((a,b)=>{const po={'p0':0,'p1':1,'p2':2};return (po[a.priority]??2)-(po[b.priority]??2)||new Date(a.created_at)-new Date(b.created_at);});
+    const tagCounts={};
+    slideComments.forEach(c=>{tagCounts[c.tag]=(tagCounts[c.tag]||0)+1;});
+    const tagPills=Object.entries(tagCounts).map(([tag,n])=>{
+      const tm=TAG_META[tag]||{label:tag,bg:'#eef1f5',color:'#50617A'};
+      return`<span class="slide-stat-pill" style="background:${tm.bg};color:${tm.color}">${tm.label} ${n}</span>`;
+    }).join('');
+    const p0count=slideComments.filter(c=>c.priority==='p0').length;
+    const p1count=slideComments.filter(c=>c.priority==='p1').length;
+    const priorityPills=(p0count?`<span class="slide-stat-pill" style="background:#fee2e2;color:#991b1b">P0 × ${p0count}</span>`:'')
+      +(p1count?`<span class="slide-stat-pill" style="background:#fff3e0;color:#7a3e00">P1 × ${p1count}</span>`:'');
+    const commentsHTML=slideComments.length
+      ?slideComments.map(c=>{
+        const tm=TAG_META[c.tag]||{label:c.tag,bg:'#eef1f5',color:'#50617A'};
+        const pm=PRIORITY_META[c.priority||'p2'];
+        const col=getColor(c.author);
+        const time=new Date(c.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+        return`<div class="con-comment">
+          <div class="avatar" style="background:${col.bg};color:${col.color};width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;flex-shrink:0">${initials(c.author)}</div>
+          <div class="con-comment-body">
+            <div class="con-comment-top">
+              <span class="con-author">${escHtml(c.author)}</span>
+              <span class="con-time">${time}</span>
+              <span class="tag-pill" style="background:${tm.bg};color:${tm.color}">${tm.label}</span>
+              <span class="tag-pill" style="background:${pm.bg};color:${pm.color}">${pm.label}</span>
+            </div>
+            <div class="con-text">${escHtml(c.text)}</div>
+          </div>
+        </div>`;
+      }).join('')
+      :'<p class="no-comments-note">No feedback on this slide</p>';
+    return`<div class="slide-block">
+      <div class="slide-block-header">
+        <div class="slide-block-thumb">${s.src?`<img src="${s.src}" alt="Slide ${i+1}"/>`:'<div class="no-thumb">No image</div>'}</div>
+        <div class="slide-block-meta">
+          <div class="slide-block-num">Slide ${i+1} of ${slides.length}</div>
+          <div class="slide-block-title">${escHtml(s.name)}</div>
+          <div class="slide-block-stats">${priorityPills}${tagPills}</div>
+        </div>
+      </div>
+      <div class="consolidated-comments">${commentsHTML}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('consolidated-overlay').classList.add('open');
+}
+
+function closeConsolidated(){document.getElementById('consolidated-overlay').classList.remove('open');}
+
+

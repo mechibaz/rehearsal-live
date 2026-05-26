@@ -201,6 +201,7 @@ td{padding:9px 13px;vertical-align:top}
 .cancel-edit-btn{font-size:11px;padding:4px 10px;border-radius:4px;border:1px solid var(--border-strong);background:transparent;color:var(--muted);cursor:pointer;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}
 .p0-btn.active{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
 .p1-btn.active{background:#fff3e0;color:#7a3e00;border-color:#fcd34d}
+.p2-btn.active{background:#eef1f5;color:#50617A;border-color:#95A4BA}
 .comment-display{line-height:1.5}
 </style>
 </head>
@@ -302,6 +303,7 @@ td{padding:9px 13px;vertical-align:top}
           <button class="filter-btn" onclick="setFilter('speaker',this)">Speaker</button>
           <button class="filter-btn p0-btn" onclick="setFilter('p0',this)">P0</button>
           <button class="filter-btn p1-btn" onclick="setFilter('p1',this)">P1</button>
+          <button class="filter-btn p2-btn" onclick="setFilter('p2',this)">P2</button>
         </div>
       </div>
 
@@ -642,18 +644,16 @@ function renderTable(){
     const canEdit=isAdmin||c.author===reviewer;
     return`<tr id="row-${c.id}">
       <td class="thumb-cell">${s?`<img src="${s.src}" alt="Slide ${sIdx+1}"/><div class="snum">Slide ${sIdx+1}</div>`:'<span style="color:var(--faint);font-size:10px">—</span>'}</td>
-      <td>
-        <span class="tag-pill" id="tag-pill-${c.id}" style="background:${tm.bg};color:${tm.color}">${tm.label}</span>
-        ${canEdit?`<div style="margin-top:5px"><select class="inline-select" data-cid="${c.id}" data-field="tag" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">
-          ${Object.entries(TAG_META).map(([k,v])=>`<option value="${k}"${c.tag===k?' selected':''}>${v.label}</option>`).join('')}
-        </select></div>`:''}
-      </td>
-      <td>
-        <span class="tag-pill" id="pri-pill-${c.id}" style="background:${pm.bg};color:${pm.color}">${pm.label}</span>
-        ${canEdit?`<div style="margin-top:5px"><select class="inline-select" data-cid="${c.id}" data-field="priority" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">
-          ${Object.entries(PRIORITY_META).map(([k,v])=>`<option value="${k}"${(c.priority||'p2')===k?' selected':''}>${v.label}</option>`).join('')}
-        </select></div>`:''}
-      </td>
+      <td>${(()=>{
+        const tagOpts=Object.entries(TAG_META).map(([k,v])=>'<option value="'+k+'"'+(c.tag===k?' selected':'')+'>'+v.label+'</option>').join('');
+        const tagSel=canEdit?'<div style="margin-top:5px"><select class="inline-select" data-cid="'+c.id+'" data-field="tag" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">'+tagOpts+'</select></div>':'';
+        return '<span class="tag-pill" id="tag-pill-'+c.id+'" style="background:'+tm.bg+';color:'+tm.color+'">'+tm.label+'</span>'+tagSel;
+      })()}</td>
+      <td>${(()=>{
+        const priOpts=Object.entries(PRIORITY_META).map(([k,v])=>'<option value="'+k+'"'+((c.priority||'p2')===k?' selected':'')+'>'+v.label+'</option>').join('');
+        const priSel=canEdit?'<div style="margin-top:5px"><select class="inline-select" data-cid="'+c.id+'" data-field="priority" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">'+priOpts+'</select></div>':'';
+        return '<span class="tag-pill" id="pri-pill-'+c.id+'" style="background:'+pm.bg+';color:'+pm.color+'">'+pm.label+'</span>'+priSel;
+      })()}</td>
       <td class="comment-text" id="ct-${c.id}">
         <div class="comment-display">${escHtml(c.text)}</div>
         ${canEdit?`<button class="edit-btn" data-cid="${c.id}">edit</button>`:''}
@@ -800,18 +800,11 @@ async function updateCommentField(cid,field,value){
   const c=comments.find(x=>x.id===cid);
   if(!c)return;
   c[field]=value;
-  if(field==='tag'){
-    const tm=TAG_META[value]||{label:value,bg:'#eef1f5',color:'#50617A'};
-    const pill=document.getElementById('tag-pill-'+cid);
-    if(pill){pill.textContent=tm.label;pill.style.background=tm.bg;pill.style.color=tm.color;}
-  }
-  if(field==='priority'){
-    const pm=PRIORITY_META[value]||PRIORITY_META.p2;
-    const pill=document.getElementById('pri-pill-'+cid);
-    if(pill){pill.textContent=pm.label;pill.style.background=pm.bg;pill.style.color=pm.color;}
-  }
+  // save to DB
   const update={};update[field]=value;
-  await sbPatch('comments',{id:cid},update);
+  sbPatch('comments',{id:cid},update);
+  // re-render after a tick so browser doesn't fight us
+  setTimeout(()=>renderTable(), 0);
 }
 
 // ── CONSOLIDATED VIEW (improved) ──────────────────────────────────────────

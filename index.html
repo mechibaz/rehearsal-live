@@ -642,16 +642,18 @@ function renderTable(){
     const canEdit=isAdmin||c.author===reviewer;
     return`<tr id="row-${c.id}">
       <td class="thumb-cell">${s?`<img src="${s.src}" alt="Slide ${sIdx+1}"/><div class="snum">Slide ${sIdx+1}</div>`:'<span style="color:var(--faint);font-size:10px">—</span>'}</td>
-      <td>${(()=>{
-        const tagOpts=Object.entries(TAG_META).map(([k,v])=>'<option value="'+k+'"'+(c.tag===k?' selected':'')+'>'+v.label+'</option>').join('');
-        const tagSel=canEdit?'<div style="margin-top:5px"><select class="inline-select" data-cid="'+c.id+'" data-field="tag" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">'+tagOpts+'</select></div>':'';
-        return '<span class="tag-pill" id="tag-pill-'+c.id+'" style="background:'+tm.bg+';color:'+tm.color+'">'+tm.label+'</span>'+tagSel;
-      })()}</td>
-      <td>${(()=>{
-        const priOpts=Object.entries(PRIORITY_META).map(([k,v])=>'<option value="'+k+'"'+((c.priority||'p2')===k?' selected':'')+'>'+v.label+'</option>').join('');
-        const priSel=canEdit?'<div style="margin-top:5px"><select class="inline-select" data-cid="'+c.id+'" data-field="priority" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">'+priOpts+'</select></div>':'';
-        return '<span class="tag-pill" id="pri-pill-'+c.id+'" style="background:'+pm.bg+';color:'+pm.color+'">'+pm.label+'</span>'+priSel;
-      })()}</td>
+      <td>
+        <span class="tag-pill" id="tag-pill-${c.id}" style="background:${tm.bg};color:${tm.color}">${tm.label}</span>
+        ${canEdit?`<div style="margin-top:5px"><select class="inline-select" data-cid="${c.id}" data-field="tag" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">
+          ${Object.entries(TAG_META).map(([k,v])=>`<option value="${k}"${c.tag===k?' selected':''}>${v.label}</option>`).join('')}
+        </select></div>`:''}
+      </td>
+      <td>
+        <span class="tag-pill" id="pri-pill-${c.id}" style="background:${pm.bg};color:${pm.color}">${pm.label}</span>
+        ${canEdit?`<div style="margin-top:5px"><select class="inline-select" data-cid="${c.id}" data-field="priority" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">
+          ${Object.entries(PRIORITY_META).map(([k,v])=>`<option value="${k}"${(c.priority||'p2')===k?' selected':''}>${v.label}</option>`).join('')}
+        </select></div>`:''}
+      </td>
       <td class="comment-text" id="ct-${c.id}">
         <div class="comment-display">${escHtml(c.text)}</div>
         ${canEdit?`<button class="edit-btn" data-cid="${c.id}">edit</button>`:''}
@@ -871,3 +873,5 @@ function openConsolidated(){
 }
 
 function closeConsolidated(){document.getElementById('consolidated-overlay').classList.remove('open');}
+
+

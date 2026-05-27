@@ -127,8 +127,16 @@ td{padding:10px 14px;vertical-align:top}
 .rxn-btn:hover,.rxn-btn.reacted{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
 .rxn-count{font-size:11px;font-weight:600}
 .empty-row td{text-align:center;padding:48px;color:var(--faint);font-size:11px;letter-spacing:0.06em}
-.cycle-pill{cursor:pointer;transition:opacity 0.15s;}
-.cycle-pill:hover{opacity:0.75;}
+.pill-select{font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;border:1.5px solid;cursor:pointer;font-family:inherit;letter-spacing:0.02em;outline:none;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;}
+.pill-select:focus{outline:none;}
+.pill-select.pill-production{background:#ede9ff;color:#3a26c4;border-color:#c4b9f5}
+.pill-select.pill-script{background:#fff3e0;color:#7a3e00;border-color:#f5c97a}
+.pill-select.pill-slides{background:#d8f5ea;color:#0a6640;border-color:#7adbb0}
+.pill-select.pill-demo{background:#e0f0ff;color:#0a4a8a;border-color:#7ab8f5}
+.pill-select.pill-speaker{background:#fde8f0;color:#8a1a44;border-color:#f5a0c0}
+.pill-select.pill-p0{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+.pill-select.pill-p1{background:#fff3e0;color:#7a3e00;border-color:#fcd34d}
+.pill-select.pill-p2{background:#eef1f5;color:#50617A;border-color:#95A4BA}
 
 /* INPUT BAR */
 .input-bar{background:var(--surface);border-top:1px solid var(--border);padding:14px 20px;display:flex;gap:10px;align-items:flex-start;flex-shrink:0}
@@ -411,7 +419,7 @@ async function loadComments(){
 }
 
 // RENDER
-function renderAll(){renderSidebar();renderSlideSelect();renderTable();updateStats();}
+function renderAll(){renderSidebar();renderSlideSelect();renderTable();updateStats();setTimeout(sizePillSelects,0);}
 
 function renderSidebar(){
   document.getElementById('slide-count').textContent=slides.length;
@@ -477,8 +485,8 @@ function renderTable(){
 
     return '<tr id="row-'+c.id+'" class="'+rowCls+'">'
       +'<td class="thumb-cell">'+(s?'<img src="'+s.src+'" alt="Slide '+(sIdx+1)+'"/><div class="snum">Slide '+(sIdx+1)+'</div>':'<span style="color:var(--faint)">—</span>')+'</td>'
-      +'<td>'+(canEdit?'<span class="pill '+tm.cls+' cycle-pill" data-cid="'+c.id+'" data-field="tag" data-val="'+c.tag+'" title="Click to change">'+esc(tm.label)+'</span>':'<span class="pill '+tm.cls+'">'+esc(tm.label)+'</span>')+'</td>'
-      +'<td>'+(canEdit?'<span class="pill '+pm.cls+' cycle-pill" data-cid="'+c.id+'" data-field="priority" data-val="'+(c.priority||'p2')+'" title="Click to change">'+pm.label+'</span>':'<span class="pill '+pm.cls+'">'+pm.label+'</span>')+'</td>'
+      +'<td>'+(canEdit?'<select class="pill-select '+tm.cls+'" data-cid="'+c.id+'" data-field="tag">'+Object.entries(TAG_META).map(([k,v])=>'<option value="'+k+'"'+(c.tag===k?' selected':'')+'>'+v.label+'</option>').join('')+'</select>':'<span class="pill '+tm.cls+'">'+esc(tm.label)+'</span>')+'</td>'
+      +'<td>'+(canEdit?'<select class="pill-select '+pm.cls+'" data-cid="'+c.id+'" data-field="priority">'+Object.entries(PRI_META).map(([k,v])=>'<option value="'+k+'"'+((c.priority||'p2')===k?' selected':'')+'>'+v.label+'</option>').join('')+'</select>':'<span class="pill '+pm.cls+'">'+pm.label+'</span>')+'</td>'
       +'<td>'
         +(canEdit
           ?'<div class="comment-text editable-text" id="ct-'+c.id+'" data-cid="'+c.id+'" title="Double-click to edit" style="cursor:text;min-height:24px">'+esc(c.text)+'</div>'
@@ -495,6 +503,18 @@ function renderTable(){
   }).join('');
 }
 
+function sizePillSelects(){
+  document.querySelectorAll('.pill-select').forEach(sel=>{
+    // create a hidden span to measure the selected option text width
+    const span=document.createElement('span');
+    span.style.cssText='position:absolute;visibility:hidden;font-size:11px;font-weight:600;letter-spacing:0.02em;padding:0 10px;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;white-space:nowrap';
+    span.textContent=sel.options[sel.selectedIndex]?sel.options[sel.selectedIndex].text:'';
+    document.body.appendChild(span);
+    sel.style.width=(span.offsetWidth+2)+'px';
+    document.body.removeChild(span);
+  });
+}
+
 function updateStats(){
   document.getElementById('stat-slides').textContent=slides.length;
   document.getElementById('stat-comments').textContent=comments.length;
@@ -507,14 +527,12 @@ document.getElementById('table-body').addEventListener('dblclick',function(e){
   if(div)startInlineEdit(div.dataset.cid);
 });
 
-document.getElementById('table-body').addEventListener('click',async function(e){
-  const pill=e.target.closest('.cycle-pill');
-  if(!pill)return;
-  const cid=pill.dataset.cid,field=pill.dataset.field,cur=pill.dataset.val;
-  const keys=field==='tag'?Object.keys(TAG_META):Object.keys(PRI_META);
-  const next=keys[(keys.indexOf(cur)+1)%keys.length];
+document.getElementById('table-body').addEventListener('change',async function(e){
+  const sel=e.target.closest('.pill-select');
+  if(!sel)return;
+  const cid=sel.dataset.cid,field=sel.dataset.field,value=sel.value;
   pollPaused=true;
-  await dbPatch('comments',cid,{[field]:next});
+  await dbPatch('comments',cid,{[field]:value});
   await loadComments();
   pollPaused=false;
 });

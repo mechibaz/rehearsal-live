@@ -91,18 +91,10 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:var(--bg
 .pill-done{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
 .pill-discard{background:#f3f4f6;color:#6b7280;border-color:#d1d5db}
 .pill-all{background:var(--accent);color:#fff;border-color:var(--accent)}
-/* active state for filter pills */
-.filter-pill.active.pill-ghost{background:var(--text);color:#fff;border-color:var(--text)}
-.filter-pill.active.pill-production{opacity:1;box-shadow:0 0 0 2px #3a26c4}
-.filter-pill.active.pill-script{box-shadow:0 0 0 2px #7a3e00}
-.filter-pill.active.pill-slides{box-shadow:0 0 0 2px #0a6640}
-.filter-pill.active.pill-demo{box-shadow:0 0 0 2px #0a4a8a}
-.filter-pill.active.pill-speaker{box-shadow:0 0 0 2px #8a1a44}
-.filter-pill.active.pill-p0{box-shadow:0 0 0 2px #991b1b}
-.filter-pill.active.pill-p1{box-shadow:0 0 0 2px #7a3e00}
-.filter-pill.active.pill-p2{box-shadow:0 0 0 2px #50617A}
-.filter-pill.active.pill-done{box-shadow:0 0 0 2px #065f46}
-.filter-pill.active.pill-discard{box-shadow:0 0 0 2px #6b7280}
+/* filter pills — inactive faded, active full color */
+.filter-pill{opacity:0.4;transition:opacity 0.15s;}
+.filter-pill:hover{opacity:0.7;}
+.filter-pill.active{opacity:1;}
 
 /* TABLE */
 .table-wrap{flex:1;overflow:auto;padding:20px}
@@ -135,8 +127,8 @@ td{padding:10px 14px;vertical-align:top}
 .rxn-btn:hover,.rxn-btn.reacted{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
 .rxn-count{font-size:11px;font-weight:600}
 .empty-row td{text-align:center;padding:48px;color:var(--faint);font-size:11px;letter-spacing:0.06em}
-.pill-select{font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px;border:1.5px solid;cursor:pointer;font-family:inherit;letter-spacing:0.02em;outline:none;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;opacity:0.45;transition:opacity 0.15s;width:auto;}
-.pill-select:hover,.pill-select:focus{opacity:1;outline:none;}
+.pill-select{font-size:11px;font-weight:600;padding:4px 14px;border-radius:99px;border:1.5px solid;cursor:pointer;font-family:inherit;letter-spacing:0.02em;outline:none;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;}
+.pill-select:focus{outline:none;}
 .pill-select.pill-production{background:#ede9ff;color:#3a26c4;border-color:#c4b9f5}
 .pill-select.pill-script{background:#fff3e0;color:#7a3e00;border-color:#f5c97a}
 .pill-select.pill-slides{background:#d8f5ea;color:#0a6640;border-color:#7adbb0}

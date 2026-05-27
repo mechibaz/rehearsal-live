@@ -135,8 +135,16 @@ td{padding:10px 14px;vertical-align:top}
 .rxn-btn:hover,.rxn-btn.reacted{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
 .rxn-count{font-size:11px;font-weight:600}
 .empty-row td{text-align:center;padding:48px;color:var(--faint);font-size:11px;letter-spacing:0.06em}
-.pill-select{display:inline-flex;font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;border:1.5px solid transparent;cursor:pointer;font-family:inherit;letter-spacing:0.02em;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2350617A'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;padding-right:20px;}
-.pill-select:focus{box-shadow:0 0 0 2px currentColor;}
+.pill-select{font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px;border:1.5px solid;cursor:pointer;font-family:inherit;letter-spacing:0.02em;outline:none;appearance:none;-webkit-appearance:none;}
+.pill-select:focus{opacity:0.85;outline:2px solid currentColor;outline-offset:1px;}
+.pill-select.pill-production{background:#ede9ff;color:#3a26c4;border-color:#c4b9f5}
+.pill-select.pill-script{background:#fff3e0;color:#7a3e00;border-color:#f5c97a}
+.pill-select.pill-slides{background:#d8f5ea;color:#0a6640;border-color:#7adbb0}
+.pill-select.pill-demo{background:#e0f0ff;color:#0a4a8a;border-color:#7ab8f5}
+.pill-select.pill-speaker{background:#fde8f0;color:#8a1a44;border-color:#f5a0c0}
+.pill-select.pill-p0{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+.pill-select.pill-p1{background:#fff3e0;color:#7a3e00;border-color:#fcd34d}
+.pill-select.pill-p2{background:#eef1f5;color:#50617A;border-color:#95A4BA}
 
 /* INPUT BAR */
 .input-bar{background:var(--surface);border-top:1px solid var(--border);padding:14px 20px;display:flex;gap:10px;align-items:flex-start;flex-shrink:0}
@@ -148,8 +156,15 @@ td{padding:10px 14px;vertical-align:top}
 .pill-selector-label{font-size:10px;color:var(--faint);letter-spacing:0.06em;text-transform:uppercase;font-weight:600;margin-right:2px}
 .input-sel-slide{font-family:inherit;font-size:12px;padding:6px 10px;border-radius:6px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text);cursor:pointer;outline:none}
 .input-sel-slide:focus{border-color:var(--accent)}
-.sel-pill{cursor:pointer;user-select:none}
-.sel-pill.selected{box-shadow:0 0 0 2.5px var(--text)}
+.sel-pill{cursor:pointer;user-select:none;background:var(--surface);color:var(--muted);border-color:var(--border-strong);}
+.sel-pill.selected.pill-production{background:#ede9ff;color:#3a26c4;border-color:#c4b9f5}
+.sel-pill.selected.pill-script{background:#fff3e0;color:#7a3e00;border-color:#f5c97a}
+.sel-pill.selected.pill-slides{background:#d8f5ea;color:#0a6640;border-color:#7adbb0}
+.sel-pill.selected.pill-demo{background:#e0f0ff;color:#0a4a8a;border-color:#7ab8f5}
+.sel-pill.selected.pill-speaker{background:#fde8f0;color:#8a1a44;border-color:#f5a0c0}
+.sel-pill.selected.pill-p0{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+.sel-pill.selected.pill-p1{background:#fff3e0;color:#7a3e00;border-color:#fcd34d}
+.sel-pill.selected.pill-p2{background:#eef1f5;color:#50617A;border-color:#95A4BA}
 .input-ta{font-family:inherit;font-size:13px;padding:9px 12px;border-radius:6px;border:1px solid var(--border-strong);background:var(--bg);color:var(--text);outline:none;resize:none;width:100%;line-height:1.5;transition:border-color 0.15s}
 .input-ta:focus{border-color:var(--accent);background:var(--surface)}
 .input-ta::placeholder{color:var(--faint)}
@@ -509,13 +524,6 @@ document.getElementById('table-body').addEventListener('change',async function(e
   const sel=e.target.closest('.pill-select');
   if(!sel)return;
   const cid=sel.dataset.cid,field=sel.dataset.field,value=sel.value;
-  // update pill color class immediately
-  const allClasses=[...sel.classList].filter(c=>c.startsWith('pill-'));
-  allClasses.forEach(c=>sel.classList.remove(c));
-  sel.classList.add('pill-select');
-  const meta=field==='tag'?(TAG_META[value]||TAG_META.production):(PRI_META[value]||PRI_META.p2);
-  sel.classList.add(meta.cls);
-  // pause poll, patch, reload
   pollPaused=true;
   await dbPatch('comments',cid,{[field]:value});
   await loadComments();

@@ -804,14 +804,19 @@ async function saveEdit(cid){
 async function updateCommentField(cid,field,value){
   const c=comments.find(x=>x.id===cid);
   if(!c)return;
-  // stop polling so it doesn't overwrite our change
   clearInterval(pollingInterval);
-  // save to DB
-  const update={};update[field]=value;
-  await sbPatch('comments',{id:cid},update);
-  // reload fresh from DB so local state matches server
+  // delete old, reinsert with new value - guaranteed to work
+  const newComment={
+    session_id:c.session_id,
+    slide_id:c.slide_id,
+    tag:field==='tag'?value:c.tag,
+    priority:field==='priority'?value:(c.priority||'p2'),
+    text:c.text,
+    author:c.author
+  };
+  await sbDelete('comments',{id:cid});
+  await sbPost('comments',newComment);
   await loadComments();
-  // restart polling
   startPolling();
 }
 

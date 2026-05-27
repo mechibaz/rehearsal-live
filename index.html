@@ -117,7 +117,7 @@ td{padding:10px 14px;vertical-align:top}
 .thumb-cell{width:200px}
 .thumb-cell img{width:184px;aspect-ratio:16/9;object-fit:cover;border-radius:6px;border:1px solid var(--border);display:block}
 .snum{font-size:9px;color:var(--faint);margin-top:4px}
-.comment-text{font-size:13px;color:var(--text);line-height:1.5;min-width:200px}
+.comment-text{font-size:13px;color:var(--text);line-height:1.5;min-width:200px;max-width:420px;word-wrap:break-word;white-space:normal;}
 .author-chip{display:flex;align-items:center;gap:7px;white-space:nowrap}
 .avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
 .author-name{font-size:12px;font-weight:500}
@@ -135,7 +135,7 @@ td{padding:10px 14px;vertical-align:top}
 .rxn-btn:hover,.rxn-btn.reacted{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
 .rxn-count{font-size:11px;font-weight:600}
 .empty-row td{text-align:center;padding:48px;color:var(--faint);font-size:11px;letter-spacing:0.06em}
-.pill-select{font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px;border:1.5px solid;cursor:pointer;font-family:inherit;letter-spacing:0.02em;outline:none;appearance:none;-webkit-appearance:none;}
+.pill-select{font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px;border:1.5px solid;cursor:pointer;font-family:inherit;letter-spacing:0.02em;outline:none;appearance:none;-webkit-appearance:none;text-align:center;text-align-last:center;}
 .pill-select:focus{opacity:0.85;outline:2px solid currentColor;outline-offset:1px;}
 .pill-select.pill-production{background:#ede9ff;color:#3a26c4;border-color:#c4b9f5}
 .pill-select.pill-script{background:#fff3e0;color:#7a3e00;border-color:#f5c97a}
@@ -198,11 +198,8 @@ td{padding:10px 14px;vertical-align:top}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:13px;padding:10px 20px;border-radius:99px;opacity:0;transition:opacity 0.2s;pointer-events:none;z-index:999;white-space:nowrap}
 .toast.show{opacity:1}
 ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:99px}
-.inline-ta{width:100%;font-size:13px;padding:7px 9px;border-radius:6px;border:1.5px solid var(--accent);background:var(--surface);color:var(--text);resize:vertical;outline:none;font-family:inherit;min-height:56px;line-height:1.5}
-.save-inline-btn{font-size:11px;padding:4px 12px;border-radius:4px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-family:inherit}
-.cancel-inline-btn{font-size:11px;padding:4px 12px;border-radius:4px;border:1px solid var(--border-strong);background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;margin-left:4px}
-.comment-text[title]{border-bottom:1px dashed var(--border-strong);}
-.comment-text[title]:hover{border-bottom-color:var(--accent);}
+.inline-ta{width:100%;max-width:420px;font-size:13px;padding:7px 9px;border-radius:6px;border:1.5px solid var(--accent);background:var(--surface);color:var(--text);resize:none;outline:none;font-family:inherit;min-height:72px;line-height:1.5}
+.editable-text:hover{background:var(--surface2);border-radius:4px;}
 </style>
 </head>
 <body>
@@ -685,34 +682,25 @@ function startInlineEdit(cid){
   if(!div||div.querySelector('textarea'))return;
   const c=comments.find(x=>x.id===cid);
   if(!c)return;
-  div.innerHTML='<textarea class="inline-ta" id="ita-'+cid+'">'+esc(c.text)+'</textarea>'
-    +'<div style="display:flex;gap:6px;margin-top:5px">'
-    +'<button class="save-inline-btn" data-cid="'+cid+'">Save</button>'
-    +'<button class="cancel-inline-btn" data-cid="'+cid+'">Cancel</button>'
-    +'</div>';
+  const orig=c.text;
+  div.innerHTML='<textarea class="inline-ta" id="ita-'+cid+'">'+esc(c.text)+'</textarea>';
   const ta=document.getElementById('ita-'+cid);
   ta.focus();ta.select();
-  ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();saveInlineEdit(cid);}if(e.key==='Escape')renderTable();});
+  ta.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ta.blur();}
+    if(e.key==='Escape'){renderTable();}
+  });
+  ta.addEventListener('blur',async function(){
+    const newText=ta.value.trim();
+    if(!newText||newText===orig){renderTable();return;}
+    pollPaused=true;
+    await dbPatch('comments',cid,{text:newText});
+    await loadComments();
+    pollPaused=false;
+  });
 }
 
-async function saveInlineEdit(cid){
-  const ta=document.getElementById('ita-'+cid);
-  if(!ta)return;
-  const newText=ta.value.trim();
-  if(!newText)return;
-  pollPaused=true;
-  await dbPatch('comments',cid,{text:newText});
-  await loadComments();
-  pollPaused=false;
-}
 
-// save/cancel inline edit via delegation
-document.getElementById('table-body').addEventListener('click',async function(e){
-  const save=e.target.closest('.save-inline-btn');
-  if(save){await saveInlineEdit(save.dataset.cid);return;}
-  const cancel=e.target.closest('.cancel-inline-btn');
-  if(cancel){renderTable();return;}
-});
 </script>
 </body>
 </html>

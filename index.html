@@ -9,23 +9,16 @@
 :root{
   --bg:#F6F9FC;--surface:#fff;--surface2:#eef1f5;--border:#d0d6e0;--border-strong:#95A4BA;
   --text:#061B31;--muted:#50617A;--faint:#95A4BA;
-  --accent:#533AFD;--accent-light:#ede9ff;
-  --navy:#061B31;
-  --p0-bg:#fee2e2;--p0-color:#991b1b;
-  --p1-bg:#fff3e0;--p1-color:#7a3e00;
-  --p2-bg:#eef1f5;--p2-color:#50617A;
+  --accent:#533AFD;--accent-light:#ede9ff;--navy:#061B31;
 }
 body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
-
-/* SCREENS */
-.screen{display:none;min-height:100vh}
-.screen.active{display:flex}
+.screen{display:none;min-height:100vh}.screen.active{display:flex}
 
 /* LOBBY */
 #screen-lobby{flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;background:var(--bg)}
-.lobby-logo{font-size:11px;letter-spacing:0.14em;color:var(--accent);margin-bottom:48px;font-weight:600;text-transform:uppercase}
+.lobby-logo{font-size:11px;letter-spacing:0.14em;color:var(--accent);margin-bottom:48px;font-weight:700;text-transform:uppercase}
 .lobby-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 40px;width:100%;max-width:460px;box-shadow:0 2px 16px rgba(6,27,49,0.06)}
-.lobby-card h1{font-size:22px;font-weight:600;margin-bottom:6px;color:var(--navy)}
+.lobby-card h1{font-size:22px;font-weight:600;margin-bottom:6px}
 .lobby-card p{font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.6}
 .field{margin-bottom:16px}
 .field label{display:block;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
@@ -35,9 +28,8 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:var(--bg
 .divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--faint);font-size:12px}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
 .btn-primary{width:100%;padding:12px;border-radius:8px;border:none;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:opacity 0.15s}
-.btn-primary:hover{opacity:0.85}
-.btn-primary:disabled{opacity:0.4;cursor:not-allowed}
-.btn-secondary{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border-strong);background:transparent;color:var(--text);font-family:inherit;font-size:14px;cursor:pointer;transition:all 0.15s;margin-bottom:10px}
+.btn-primary:hover{opacity:0.85}.btn-primary:disabled{opacity:0.4;cursor:not-allowed}
+.btn-secondary{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border-strong);background:transparent;color:var(--text);font-family:inherit;font-size:14px;cursor:pointer;margin-bottom:10px}
 .btn-secondary:hover{background:var(--surface2)}
 .lobby-error{font-size:12px;color:#c0392b;margin-top:8px;display:none}
 
@@ -53,7 +45,6 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:var(--bg
 .reviewer-badge{font-size:11px;background:rgba(246,245,241,0.12);border:1px solid rgba(246,245,241,0.2);border-radius:99px;padding:4px 12px;color:rgba(246,245,241,0.8)}
 .topbar-btn{font-family:inherit;font-size:11px;padding:6px 12px;border-radius:6px;border:1px solid rgba(246,245,241,0.25);background:transparent;color:rgba(246,245,241,0.85);cursor:pointer;transition:all 0.15s;white-space:nowrap}
 .topbar-btn:hover{background:rgba(246,245,241,0.1)}
-
 .app-body{display:flex;flex:1;overflow:hidden}
 
 /* SIDEBAR */
@@ -66,8 +57,7 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:var(--bg
 .upload-area span{font-size:10px;color:var(--faint)}
 .slides-list{flex:1;overflow-y:auto;padding:8px}
 .slide-item{border-radius:8px;overflow:hidden;cursor:pointer;margin-bottom:7px;border:1.5px solid transparent;transition:all 0.12s;background:var(--surface2);position:relative}
-.slide-item:hover{border-color:var(--border-strong)}
-.slide-item.active{border-color:var(--accent)}
+.slide-item:hover{border-color:var(--border-strong)}.slide-item.active{border-color:var(--accent)}
 .slide-item img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover}
 .slide-item-foot{padding:4px 8px;display:flex;align-items:center;justify-content:space-between}
 .slide-num-lbl{font-size:9px;color:var(--faint);letter-spacing:0.06em}
@@ -75,69 +65,96 @@ body{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;background:var(--bg
 
 /* MAIN */
 .main-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.upload-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0;display:none}
+.upload-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 20px;display:none;align-items:center;gap:10px;flex-shrink:0}
 .upload-bar-label{font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--faint);font-weight:600}
-.upload-btn{font-size:12px;padding:6px 14px;border-radius:6px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text);cursor:pointer;font-family:inherit;transition:all 0.15s}
-.upload-btn:hover{background:var(--surface2)}
+.upload-btn-label{font-size:12px;padding:6px 14px;border-radius:6px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text);cursor:pointer;font-family:inherit}
 .upload-hint{font-size:11px;color:var(--faint)}
-
 .stats-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;gap:20px;align-items:center;flex-shrink:0;flex-wrap:wrap}
 .stat{display:flex;flex-direction:column}
-.stat-val{font-size:18px;font-weight:600;color:var(--text);line-height:1;letter-spacing:-0.02em}
+.stat-val{font-size:18px;font-weight:600;color:var(--text);line-height:1}
 .stat-lbl{font-size:9px;color:var(--faint);letter-spacing:0.08em;text-transform:uppercase;margin-top:2px}
 .stats-spacer{flex:1}
 .filter-row{display:flex;gap:5px;flex-wrap:wrap}
-.filter-btn{font-size:11px;font-family:inherit;font-weight:500;padding:4px 12px;border-radius:99px;border:1px solid var(--border-strong);background:var(--surface);color:var(--muted);cursor:pointer;transition:all 0.12s}
-.filter-btn:hover{border-color:var(--muted);color:var(--text)}
-.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 
+/* PILLS — shared style for filters AND input selectors */
+.pill{display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px;border:1.5px solid transparent;cursor:pointer;transition:all 0.12s;white-space:nowrap;font-family:inherit;letter-spacing:0.02em}
+.pill-ghost{background:var(--surface);border-color:var(--border-strong);color:var(--muted)}
+.pill-ghost:hover{border-color:var(--muted);color:var(--text)}
+.pill-production{background:#ede9ff;color:#3a26c4;border-color:#c4b9f5}
+.pill-script{background:#fff3e0;color:#7a3e00;border-color:#f5c97a}
+.pill-slides{background:#d8f5ea;color:#0a6640;border-color:#7adbb0}
+.pill-demo{background:#e0f0ff;color:#0a4a8a;border-color:#7ab8f5}
+.pill-speaker{background:#fde8f0;color:#8a1a44;border-color:#f5a0c0}
+.pill-p0{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+.pill-p1{background:#fff3e0;color:#7a3e00;border-color:#fcd34d}
+.pill-p2{background:#eef1f5;color:#50617A;border-color:#95A4BA}
+.pill-done{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
+.pill-discard{background:#f3f4f6;color:#6b7280;border-color:#d1d5db}
+.pill-all{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* active state for filter pills */
+.filter-pill.active.pill-ghost{background:var(--text);color:#fff;border-color:var(--text)}
+.filter-pill.active.pill-production{opacity:1;box-shadow:0 0 0 2px #3a26c4}
+.filter-pill.active.pill-script{box-shadow:0 0 0 2px #7a3e00}
+.filter-pill.active.pill-slides{box-shadow:0 0 0 2px #0a6640}
+.filter-pill.active.pill-demo{box-shadow:0 0 0 2px #0a4a8a}
+.filter-pill.active.pill-speaker{box-shadow:0 0 0 2px #8a1a44}
+.filter-pill.active.pill-p0{box-shadow:0 0 0 2px #991b1b}
+.filter-pill.active.pill-p1{box-shadow:0 0 0 2px #7a3e00}
+.filter-pill.active.pill-p2{box-shadow:0 0 0 2px #50617A}
+.filter-pill.active.pill-done{box-shadow:0 0 0 2px #065f46}
+.filter-pill.active.pill-discard{box-shadow:0 0 0 2px #6b7280}
+
+/* TABLE */
 .table-wrap{flex:1;overflow:auto;padding:20px}
 table{width:100%;border-collapse:collapse;background:var(--surface);border-radius:10px;overflow:hidden;border:1px solid var(--border);font-size:13px}
 thead th{background:var(--surface2);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--faint);padding:9px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;font-weight:600}
 tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s}
 tbody tr:last-child{border-bottom:none}
 tbody tr:hover{background:var(--surface2)}
+tbody tr.row-done{opacity:0.5}
+tbody tr.row-discard{opacity:0.35;text-decoration:line-through}
 td{padding:10px 14px;vertical-align:top}
 .thumb-cell{width:200px}
 .thumb-cell img{width:184px;aspect-ratio:16/9;object-fit:cover;border-radius:6px;border:1px solid var(--border);display:block}
-.snum{font-size:9px;color:var(--faint);margin-top:4px;letter-spacing:0.06em}
-.field-select{font-size:12px;padding:6px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;outline:none;font-family:inherit;width:100%;max-width:130px}
-.field-select:focus{border-color:var(--accent)}
+.snum{font-size:9px;color:var(--faint);margin-top:4px}
 .comment-text{font-size:13px;color:var(--text);line-height:1.5;min-width:200px}
-.edit-btn{font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;margin-top:5px;display:block;font-family:inherit}
-.edit-btn:hover{text-decoration:underline}
-.edit-textarea{width:100%;font-size:13px;padding:7px 9px;border-radius:6px;border:1.5px solid var(--accent);background:var(--surface);color:var(--text);resize:vertical;outline:none;font-family:inherit;min-height:60px;line-height:1.5;margin-top:4px}
-.save-btn{font-size:11px;padding:4px 12px;border-radius:4px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-family:inherit;margin-top:5px}
-.cancel-btn{font-size:11px;padding:4px 12px;border-radius:4px;border:1px solid var(--border-strong);background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;margin-left:5px;margin-top:5px}
 .author-chip{display:flex;align-items:center;gap:7px;white-space:nowrap}
 .avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
 .author-name{font-size:12px;font-weight:500}
-.ts{font-size:10px;color:var(--faint);letter-spacing:0.04em}
-.del-btn{background:none;border:none;cursor:pointer;color:var(--faint);padding:3px 5px;border-radius:4px;font-size:13px;font-family:inherit}
+.ts{font-size:10px;color:var(--faint)}
+/* status buttons */
+.status-btns{display:flex;gap:5px;margin-top:6px}
+.status-btn{font-size:14px;background:none;border:1px solid var(--border);border-radius:6px;cursor:pointer;padding:3px 8px;transition:all 0.12s;line-height:1}
+.status-btn:hover{border-color:var(--border-strong);background:var(--surface2)}
+.status-btn.active-done{background:#d1fae5;border-color:#6ee7b7}
+.status-btn.active-discard{background:#f3f4f6;border-color:#d1d5db}
+.del-btn{background:none;border:none;cursor:pointer;color:var(--faint);padding:3px 5px;border-radius:4px;font-size:13px}
 .del-btn:hover{color:#c0392b;background:#fde8e8}
-.empty-row td{text-align:center;padding:48px;color:var(--faint);font-size:11px;letter-spacing:0.06em}
-.reactions{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
-.rxn-btn{font-size:12px;padding:3px 9px;border-radius:99px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all 0.12s;display:flex;align-items:center;gap:3px;color:var(--muted);font-family:inherit}
+.reactions{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.rxn-btn{font-size:12px;padding:3px 8px;border-radius:99px;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;gap:3px;color:var(--muted);font-family:inherit}
 .rxn-btn:hover,.rxn-btn.reacted{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
 .rxn-count{font-size:11px;font-weight:600}
+.empty-row td{text-align:center;padding:48px;color:var(--faint);font-size:11px;letter-spacing:0.06em}
 
 /* INPUT BAR */
 .input-bar{background:var(--surface);border-top:1px solid var(--border);padding:14px 20px;display:flex;gap:10px;align-items:flex-start;flex-shrink:0}
 .input-preview{width:120px;flex-shrink:0}
 .input-preview img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:5px;border:1px solid var(--border);display:block}
 .no-slide-prev{width:100%;aspect-ratio:16/9;background:var(--surface2);border-radius:5px;border:1.5px dashed var(--border-strong);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--faint)}
-.input-main{flex:1;display:flex;flex-direction:column;gap:7px}
-.input-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
-.input-sel{font-family:inherit;font-size:12px;padding:7px 10px;border-radius:6px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text);cursor:pointer;outline:none}
-.input-sel:focus{border-color:var(--accent)}
+.input-main{flex:1;display:flex;flex-direction:column;gap:8px}
+.pill-selector{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.pill-selector-label{font-size:10px;color:var(--faint);letter-spacing:0.06em;text-transform:uppercase;font-weight:600;margin-right:2px}
+.input-sel-slide{font-family:inherit;font-size:12px;padding:6px 10px;border-radius:6px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text);cursor:pointer;outline:none}
+.input-sel-slide:focus{border-color:var(--accent)}
+.sel-pill{cursor:pointer;user-select:none}
+.sel-pill.selected{box-shadow:0 0 0 2.5px var(--text)}
 .input-ta{font-family:inherit;font-size:13px;padding:9px 12px;border-radius:6px;border:1px solid var(--border-strong);background:var(--bg);color:var(--text);outline:none;resize:none;width:100%;line-height:1.5;transition:border-color 0.15s}
 .input-ta:focus{border-color:var(--accent);background:var(--surface)}
 .input-ta::placeholder{color:var(--faint)}
-.submit-btn{font-family:inherit;font-size:13px;font-weight:500;padding:9px 20px;border-radius:6px;border:none;background:var(--accent);color:#fff;cursor:pointer;transition:opacity 0.15s;white-space:nowrap}
-.submit-btn:hover{opacity:0.85}
-.submit-btn:disabled{opacity:0.4;cursor:not-allowed}
+.submit-btn{font-family:inherit;font-size:13px;font-weight:500;padding:9px 20px;border-radius:6px;border:none;background:var(--accent);color:#fff;cursor:pointer;transition:opacity 0.15s}
+.submit-btn:hover{opacity:0.85}.submit-btn:disabled{opacity:0.4;cursor:not-allowed}
 
-/* CONSOLIDATED OVERLAY */
+/* OVERLAYS */
 .overlay{display:none;position:fixed;inset:0;background:rgba(6,27,49,0.55);z-index:300;overflow-y:auto;padding:32px 16px}
 .overlay.open{display:block}
 .overlay-panel{background:var(--surface);border-radius:14px;width:100%;max-width:880px;margin:auto;overflow:hidden}
@@ -151,17 +168,14 @@ td{padding:10px 14px;vertical-align:top}
 .slide-block-thumb img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover}
 .slide-block-meta{flex:1}
 .slide-block-num{font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px}
-.slide-block-name{font-size:15px;font-weight:500;color:var(--text);margin-bottom:10px}
+.slide-block-name{font-size:15px;font-weight:500;margin-bottom:8px}
 .con-comment{display:flex;gap:10px;padding:9px 12px;border-radius:8px;background:var(--bg);margin-bottom:7px}
 .con-body{flex:1}
-.con-top{display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap}
+.con-top{display:flex;align-items:center;gap:7px;margin-bottom:3px;flex-wrap:wrap}
 .con-author{font-size:12px;font-weight:500}
 .con-time{font-size:10px;color:var(--faint)}
-.con-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:0.04em}
 .con-text{font-size:13px;color:var(--muted);line-height:1.5}
 .no-fb{font-size:12px;color:var(--faint);font-style:italic}
-
-/* EXPORT MODAL */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(6,27,49,0.5);z-index:400;align-items:center;justify-content:center}
 .modal-bg.open{display:flex}
 .modal{background:var(--surface);border-radius:12px;padding:28px 32px;width:480px;max-width:90vw}
@@ -171,23 +185,18 @@ td{padding:10px 14px;vertical-align:top}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
 .modal-cancel{font-size:13px;padding:8px 16px;border-radius:6px;border:1px solid var(--border-strong);background:transparent;cursor:pointer;color:var(--muted);font-family:inherit}
 .modal-ok{font-size:13px;padding:8px 16px;border-radius:6px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-family:inherit;font-weight:500}
-
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:13px;padding:10px 20px;border-radius:99px;opacity:0;transition:opacity 0.2s;pointer-events:none;z-index:999;white-space:nowrap}
 .toast.show{opacity:1}
-
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:99px}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:99px}
 </style>
 </head>
 <body>
-
 <div class="toast" id="toast"></div>
 
-<!-- EXPORT MODAL -->
+<!-- EXPORT -->
 <div class="modal-bg" id="export-modal">
   <div class="modal">
-    <h2>Export feedback</h2>
-    <p>Copy and paste into a doc or email.</p>
+    <h2>Export feedback</h2><p>Copy and paste into a doc or email.</p>
     <textarea id="export-text" readonly></textarea>
     <div class="modal-actions">
       <button class="modal-cancel" id="btn-close-export">Close</button>
@@ -196,14 +205,11 @@ td{padding:10px 14px;vertical-align:top}
   </div>
 </div>
 
-<!-- CONSOLIDATED OVERLAY -->
-<div class="overlay" id="consolidated-overlay">
+<!-- CONSOLIDATED -->
+<div class="overlay" id="overlay-con">
   <div class="overlay-panel">
-    <div class="overlay-header">
-      <h2 id="con-title">Full rehearsal view</h2>
-      <button class="overlay-close" id="btn-close-con">✕ Close</button>
-    </div>
-    <div id="consolidated-body"></div>
+    <div class="overlay-header"><h2 id="con-title">Full view</h2><button class="overlay-close" id="btn-close-con">✕ Close</button></div>
+    <div id="con-body"></div>
   </div>
 </div>
 
@@ -240,75 +246,71 @@ td{padding:10px 14px;vertical-align:top}
       <button class="topbar-btn" id="btn-export">↓ Export</button>
     </div>
   </div>
-
   <div class="app-body">
     <aside class="sidebar">
       <div class="sidebar-head">
         <span class="sidebar-label">Slides</span>
         <span class="sidebar-label" id="slide-count">0</span>
       </div>
-      <div class="upload-area" id="sidebar-upload">
-        <p>Drop slides here</p>
-        <span>PNG / JPG · loads in order</span>
+      <div class="upload-area" id="sidebar-drop">
+        <p>Drop slides here</p><span>PNG / JPG · loads in order</span>
         <input type="file" id="file-input" accept="image/*" multiple style="display:none"/>
       </div>
       <div class="slides-list" id="slides-list"></div>
     </aside>
-
     <div class="main-panel">
       <div class="upload-bar" id="upload-bar">
         <span class="upload-bar-label">Admin</span>
-        <label class="upload-btn" id="upload-label">↑ Upload slides (PNG/JPG)<input type="file" id="file-input2" accept="image/*" multiple style="display:none"/></label>
+        <label class="upload-btn-label">↑ Upload slides (PNG/JPG)<input type="file" id="file-input2" accept="image/*" multiple style="display:none"/></label>
         <span class="upload-hint" id="upload-hint">Export from Keynote → File → Export → Images</span>
       </div>
-
       <div class="stats-bar">
         <div class="stat"><span class="stat-val" id="stat-slides">0</span><span class="stat-lbl">Slides</span></div>
         <div class="stat"><span class="stat-val" id="stat-comments">0</span><span class="stat-lbl">Comments</span></div>
         <div class="stat"><span class="stat-val" id="stat-flagged">0</span><span class="stat-lbl">Slides flagged</span></div>
         <div class="stats-spacer"></div>
         <div class="filter-row" id="filter-row">
-          <button class="filter-btn active" data-filter="all">All</button>
-          <button class="filter-btn" data-filter="production">Production</button>
-          <button class="filter-btn" data-filter="script">Script</button>
-          <button class="filter-btn" data-filter="slides">Slides</button>
-          <button class="filter-btn" data-filter="demo">Demo</button>
-          <button class="filter-btn" data-filter="speaker">Speaker</button>
-          <button class="filter-btn" data-filter="p0">P0</button>
-          <button class="filter-btn" data-filter="p1">P1</button>
-          <button class="filter-btn" data-filter="p2">P2</button>
+          <button class="pill pill-all filter-pill active" data-filter="all">All</button>
+          <button class="pill pill-production filter-pill" data-filter="production">Production</button>
+          <button class="pill pill-script filter-pill" data-filter="script">Script</button>
+          <button class="pill pill-slides filter-pill" data-filter="slides">Slides</button>
+          <button class="pill pill-demo filter-pill" data-filter="demo">Demo</button>
+          <button class="pill pill-speaker filter-pill" data-filter="speaker">Speaker</button>
+          <button class="pill pill-p0 filter-pill" data-filter="p0">P0</button>
+          <button class="pill pill-p1 filter-pill" data-filter="p1">P1</button>
+          <button class="pill pill-p2 filter-pill" data-filter="p2">P2</button>
+          <button class="pill pill-done filter-pill" data-filter="done">✓ Done</button>
+          <button class="pill pill-discard filter-pill" data-filter="discard">✕ Disregarded</button>
         </div>
       </div>
-
       <div class="table-wrap">
         <table>
           <thead><tr><th>Slide</th><th>Category</th><th>Priority</th><th>Feedback</th><th>Reviewer</th><th>Time</th><th></th></tr></thead>
           <tbody id="table-body"></tbody>
         </table>
       </div>
-
       <div class="input-bar">
         <div class="input-preview" id="input-preview"><div class="no-slide-prev">no slide</div></div>
         <div class="input-main">
-          <div class="input-row">
-            <select class="input-sel" id="slide-select"></select>
-            <select class="input-sel" id="tag-select">
-              <option value="production">Production</option>
-              <option value="script">Script</option>
-              <option value="slides">Slides</option>
-              <option value="demo">Demo</option>
-              <option value="speaker">Speaker</option>
-            </select>
-            <select class="input-sel" id="priority-select">
-              <option value="p2">P2 — Normal</option>
-              <option value="p1">P1 — High</option>
-              <option value="p0">P0 — Critical</option>
-            </select>
+          <div class="pill-selector">
+            <select class="input-sel-slide" id="slide-select"><option value="">— slide —</option></select>
+          </div>
+          <div class="pill-selector">
+            <span class="pill-selector-label">Category</span>
+            <button class="pill pill-production sel-pill selected" data-type="tag" data-val="production">Production</button>
+            <button class="pill pill-script sel-pill" data-type="tag" data-val="script">Script</button>
+            <button class="pill pill-slides sel-pill" data-type="tag" data-val="slides">Slides</button>
+            <button class="pill pill-demo sel-pill" data-type="tag" data-val="demo">Demo</button>
+            <button class="pill pill-speaker sel-pill" data-type="tag" data-val="speaker">Speaker</button>
+          </div>
+          <div class="pill-selector">
+            <span class="pill-selector-label">Priority</span>
+            <button class="pill pill-p2 sel-pill selected" data-type="priority" data-val="p2">P2</button>
+            <button class="pill pill-p1 sel-pill" data-type="priority" data-val="p1">P1</button>
+            <button class="pill pill-p0 sel-pill" data-type="priority" data-val="p0">P0</button>
           </div>
           <textarea class="input-ta" id="comment-input" rows="2" placeholder="Type feedback here… (Enter to submit)"></textarea>
-          <div style="display:flex;justify-content:flex-end">
-            <button class="submit-btn" id="btn-submit">Add feedback</button>
-          </div>
+          <div style="display:flex;justify-content:flex-end"><button class="submit-btn" id="btn-submit">Add feedback</button></div>
         </div>
       </div>
     </div>
@@ -316,68 +318,35 @@ td{padding:10px 14px;vertical-align:top}
 </div>
 
 <script>
-// ── CONFIG ────────────────────────────────────────────────────────────────
-const SUPA_URL = 'https://qvgteedgyosthctnxsjx.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2Z3RlZWRneW9zdGhjdG54c2p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MjI1OTcsImV4cCI6MjA5NTM5ODU5N30.gS8VIuqG_isqqndErBC3_2a2ZuYua7De5GaeXREr454';
-const HEADERS = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+const SUPA_URL='https://qvgteedgyosthctnxsjx.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2Z3RlZWRneW9zdGhjdG54c2p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MjI1OTcsImV4cCI6MjA5NTM5ODU5N30.gS8VIuqG_isqqndErBC3_2a2ZuYua7De5GaeXREr454';
+const H={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
 
-const TAG_META = {
-  production:{label:'Production',bg:'#ede9ff',color:'#3a26c4'},
-  script:    {label:'Script',    bg:'#fff3e0',color:'#7a3e00'},
-  slides:    {label:'Slides',    bg:'#d8f5ea',color:'#0a6640'},
-  demo:      {label:'Demo',      bg:'#e0f0ff',color:'#0a4a8a'},
-  speaker:   {label:'Speaker',   bg:'#fde8f0',color:'#8a1a44'},
-};
-const PRI_META = {
-  p0:{label:'P0',bg:'#fee2e2',color:'#991b1b'},
-  p1:{label:'P1',bg:'#fff3e0',color:'#7a3e00'},
-  p2:{label:'P2',bg:'#eef1f5',color:'#50617A'},
-};
-const AVATAR_COLORS=[
-  {bg:'#e8e4ff',color:'#4136a8'},{bg:'#d8f5ea',color:'#0a6640'},
-  {bg:'#fde8f0',color:'#8a1a44'},{bg:'#e0f0ff',color:'#0a4a8a'},
-  {bg:'#fff0d4',color:'#7a4a00'},{bg:'#f5e8ff',color:'#5a1a8a'},
-];
-const REACTIONS = ['👍','💯','❗','🤔'];
+const TAG_META={production:{label:'Production',cls:'pill-production'},script:{label:'Script',cls:'pill-script'},slides:{label:'Slides',cls:'pill-slides'},demo:{label:'Demo',cls:'pill-demo'},speaker:{label:'Speaker',cls:'pill-speaker'}};
+const PRI_META={p0:{label:'P0',cls:'pill-p0'},p1:{label:'P1',cls:'pill-p1'},p2:{label:'P2',cls:'pill-p2'}};
+const AV_COLORS=[{bg:'#e8e4ff',color:'#4136a8'},{bg:'#d8f5ea',color:'#0a6640'},{bg:'#fde8f0',color:'#8a1a44'},{bg:'#e0f0ff',color:'#0a4a8a'},{bg:'#fff0d4',color:'#7a4a00'},{bg:'#f5e8ff',color:'#5a1a8a'}];
+const REACTIONS=['👍','💯','❗','🤔'];
 
-// ── STATE ─────────────────────────────────────────────────────────────────
-let sessionId=null, sessionTitle='', reviewer='', isAdmin=false;
-let slides=[], comments=[], activeFilter='all';
-let pollingInterval=null;
+let sessionId=null,sessionTitle='',reviewer='',isAdmin=false;
+let slides=[],comments=[],activeFilter='all';
+let pollingInterval=null,pollPaused=false;
 const nameColors={};let colorIdx=0;
 const reactionsMap={};
+let selTag='production',selPriority='p2';
 
-// ── HELPERS ───────────────────────────────────────────────────────────────
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function initials(n){return(n||'?').trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2)}
-function getColor(name){if(!nameColors[name]){nameColors[name]=AVATAR_COLORS[colorIdx%AVATAR_COLORS.length];colorIdx++;}return nameColors[name]}
-function makeCode(){const w=['ALPHA','BRAVO','DELTA','ECHO','FOXTROT','GAMMA','NOVA','OSCAR','SIERRA','TANGO','ZULU'];return w[Math.floor(Math.random()*w.length)]+'-'+Math.floor(10+Math.random()*89)}
+function getColor(n){if(!nameColors[n]){nameColors[n]=AV_COLORS[colorIdx%AV_COLORS.length];colorIdx++;}return nameColors[n]}
+function makeCode(){const w=['ALPHA','BRAVO','DELTA','ECHO','FOXTROT','GAMMA','NOVA','SIERRA','TANGO','ZULU'];return w[Math.floor(Math.random()*w.length)]+'-'+Math.floor(10+Math.random()*89)}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
 
-// ── SUPABASE ──────────────────────────────────────────────────────────────
-async function dbGet(table,filter){
-  const url=SUPA_URL+'/rest/v1/'+table+'?select=*'+(filter?'&'+filter:'');
-  const r=await fetch(url,{headers:HEADERS});
-  if(!r.ok){console.error('dbGet',r.status,await r.text());return [];}
-  return r.json();
-}
-async function dbPost(table,body){
-  const r=await fetch(SUPA_URL+'/rest/v1/'+table,{method:'POST',headers:HEADERS,body:JSON.stringify(body)});
-  const txt=await r.text();
-  if(!r.ok){console.error('dbPost',r.status,txt);return null;}
-  try{return JSON.parse(txt)}catch(e){return[]}
-}
-async function dbPatch(table,id,body){
-  const r=await fetch(SUPA_URL+'/rest/v1/'+table+'?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:HEADERS,body:JSON.stringify(body)});
-  if(!r.ok)console.error('dbPatch',r.status,await r.text());
-}
-async function dbDelete(table,id){
-  const r=await fetch(SUPA_URL+'/rest/v1/'+table+'?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:HEADERS});
-  if(!r.ok)console.error('dbDelete',r.status,await r.text());
-}
+async function dbGet(t,f){const r=await fetch(SUPA_URL+'/rest/v1/'+t+'?select=*'+(f?'&'+f:''),{headers:H});if(!r.ok)return[];return r.json()}
+async function dbPost(t,b){const r=await fetch(SUPA_URL+'/rest/v1/'+t,{method:'POST',headers:H,body:JSON.stringify(b)});const txt=await r.text();try{return JSON.parse(txt)}catch(e){return[]}}
+async function dbPatch(t,id,b){await fetch(SUPA_URL+'/rest/v1/'+t+'?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:H,body:JSON.stringify(b)})}
+async function dbDelete(t,id){await fetch(SUPA_URL+'/rest/v1/'+t+'?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:H})}
 
-// ── SESSION ───────────────────────────────────────────────────────────────
-document.getElementById('btn-start').onclick = async function(){
+// SESSION
+document.getElementById('btn-start').addEventListener('click',async function(){
   const name=document.getElementById('lobby-name').value.trim();
   const title=document.getElementById('lobby-title').value.trim()||'Rehearsal Session';
   if(!name){toast('Enter your name');return;}
@@ -385,26 +354,22 @@ document.getElementById('btn-start').onclick = async function(){
   const code=makeCode();
   const res=await dbPost('sessions',{id:code,title,slides:[]});
   if(res&&res.length){sessionId=code;sessionTitle=title;reviewer=name;isAdmin=true;enterApp();}
-  else{toast('Could not create session');this.disabled=false;this.textContent='Start new session (presenter)';}
-};
-
-document.getElementById('btn-join').onclick = async function(){
+  else{toast('Could not create session — check Supabase');this.disabled=false;this.textContent='Start new session (presenter)';}
+});
+document.getElementById('btn-join').addEventListener('click',async function(){
   const name=document.getElementById('lobby-name').value.trim();
   const code=document.getElementById('lobby-code').value.trim().toUpperCase();
   if(!name){toast('Enter your name');return;}
   if(!code){toast('Enter a session code');return;}
   document.getElementById('lobby-error').style.display='none';
   const res=await dbGet('sessions','id=eq.'+encodeURIComponent(code));
-  if(res&&res.length){
-    sessionId=code;sessionTitle=res[0].title;reviewer=name;isAdmin=false;
-    slides=res[0].slides||[];enterApp();
-  } else {
-    document.getElementById('lobby-error').style.display='block';
-  }
-};
-
+  if(res&&res.length){sessionId=code;sessionTitle=res[0].title;reviewer=name;isAdmin=false;slides=res[0].slides||[];enterApp();}
+  else document.getElementById('lobby-error').style.display='block';
+});
 document.getElementById('lobby-title').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('btn-start').click()});
 document.getElementById('lobby-code').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('btn-join').click()});
+const urlJoin=new URLSearchParams(window.location.search).get('join');
+if(urlJoin)document.getElementById('lobby-code').value=urlJoin;
 
 function enterApp(){
   document.getElementById('screen-lobby').classList.remove('active');
@@ -412,15 +377,17 @@ function enterApp(){
   document.getElementById('app-title').textContent=sessionTitle;
   document.getElementById('app-reviewer').textContent=reviewer;
   document.getElementById('app-code').textContent=sessionId;
-  if(isAdmin){
-    document.getElementById('upload-bar').style.display='flex';
-    document.getElementById('btn-share').style.display='';
-  }
+  if(isAdmin){document.getElementById('upload-bar').style.display='flex';document.getElementById('btn-share').style.display='';}
   loadComments();
-  pollingInterval=setInterval(pollUpdates,2500);
+  pollingInterval=setInterval(async()=>{
+    if(pollPaused)return;
+    if(!isAdmin){const r=await dbGet('sessions','id=eq.'+encodeURIComponent(sessionId)+'&select=slides');if(r&&r.length){slides=r[0].slides||[];renderSidebar();renderSlideSelect();}}
+    const r=await dbGet('comments','session_id=eq.'+encodeURIComponent(sessionId)+'&order=created_at.asc');
+    if(r&&JSON.stringify(r)!==JSON.stringify(comments)){comments=r;renderAll();}
+  },3000);
 }
 
-// ── FILE UPLOAD ───────────────────────────────────────────────────────────
+// FILE UPLOAD
 function handleFiles(files){
   if(!isAdmin)return;
   const arr=Array.from(files).sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
@@ -431,56 +398,38 @@ function handleFiles(files){
     reader.onload=async e=>{
       slides.push({id:'idx:'+slides.length,src:e.target.result,name:f.name.replace(/\.[^.]+$/,'')});
       loaded++;
-      if(loaded===arr.length){
-        await dbPatch('sessions',sessionId,{slides});
-        document.getElementById('upload-hint').textContent=slides.length+' slides uploaded';
-        renderAll();
-      }
+      if(loaded===arr.length){await dbPatch('sessions',sessionId,{slides});document.getElementById('upload-hint').textContent=slides.length+' slides uploaded';renderAll();}
     };
     reader.readAsDataURL(f);
   });
 }
-
-document.getElementById('sidebar-upload').addEventListener('click',()=>{if(isAdmin)document.getElementById('file-input').click()});
+document.getElementById('sidebar-drop').addEventListener('click',()=>{if(isAdmin)document.getElementById('file-input').click()});
 document.getElementById('file-input').addEventListener('change',function(){handleFiles(this.files)});
 document.getElementById('file-input2').addEventListener('change',function(){handleFiles(this.files)});
-document.getElementById('sidebar-upload').addEventListener('dragover',e=>{e.preventDefault()});
-document.getElementById('sidebar-upload').addEventListener('drop',e=>{e.preventDefault();handleFiles(e.dataTransfer.files)});
+document.getElementById('sidebar-drop').addEventListener('dragover',e=>e.preventDefault());
+document.getElementById('sidebar-drop').addEventListener('drop',e=>{e.preventDefault();handleFiles(e.dataTransfer.files)});
 
-// ── POLL ──────────────────────────────────────────────────────────────────
 async function loadComments(){
   const res=await dbGet('comments','session_id=eq.'+encodeURIComponent(sessionId)+'&order=created_at.asc');
   if(res){comments=res;renderAll();}
 }
-async function pollUpdates(){
-  if(!isAdmin){
-    const res=await dbGet('sessions','id=eq.'+encodeURIComponent(sessionId)+'&select=slides');
-    if(res&&res.length){slides=res[0].slides||[];renderSidebar();renderSlideSelect();}
-  }
-  const res=await dbGet('comments','session_id=eq.'+encodeURIComponent(sessionId)+'&order=created_at.asc');
-  if(res&&JSON.stringify(res)!==JSON.stringify(comments)){comments=res;renderAll();}
-}
 
-// ── RENDER ────────────────────────────────────────────────────────────────
+// RENDER
 function renderAll(){renderSidebar();renderSlideSelect();renderTable();updateStats();}
 
 function renderSidebar(){
   document.getElementById('slide-count').textContent=slides.length;
   document.getElementById('slides-list').innerHTML=slides.map((s,i)=>{
     const cnt=comments.filter(c=>c.slide_id==='idx:'+i).length;
-    return '<div class="slide-item" data-idx="'+i+'">'
-      +'<img src="'+s.src+'" alt="Slide '+(i+1)+'"/>'
-      +'<div class="slide-item-foot"><span class="slide-num-lbl">Slide '+(i+1)+'</span>'
-      +(cnt?'<span class="slide-badge">'+cnt+'</span>':'')
-      +'</div></div>';
+    return '<div class="slide-item" data-idx="'+i+'"><img src="'+s.src+'" alt="Slide '+(i+1)+'"/>'
+      +'<div class="slide-item-foot"><span class="slide-num-lbl">Slide '+(i+1)+'</span>'+(cnt?'<span class="slide-badge">'+cnt+'</span>':'')+'</div></div>';
   }).join('');
 }
 
 function renderSlideSelect(){
   const sel=document.getElementById('slide-select');
   const cur=sel.value;
-  sel.innerHTML='<option value="">— select slide —</option>'
-    +slides.map((s,i)=>'<option value="'+i+'">Slide '+(i+1)+' — '+esc(s.name)+'</option>').join('');
+  sel.innerHTML='<option value="">— slide —</option>'+slides.map((s,i)=>'<option value="'+i+'">Slide '+(i+1)+' — '+esc(s.name)+'</option>').join('');
   if(cur)sel.value=cur;
   updatePreview();
 }
@@ -488,23 +437,22 @@ function renderSlideSelect(){
 function updatePreview(){
   const idx=document.getElementById('slide-select').value;
   const s=idx!==''?slides[parseInt(idx)]:null;
-  document.getElementById('input-preview').innerHTML=s
-    ?'<img src="'+s.src+'" alt="preview"/>'
-    :'<div class="no-slide-prev">no slide</div>';
+  document.getElementById('input-preview').innerHTML=s?'<img src="'+s.src+'" alt="preview"/>':'<div class="no-slide-prev">no slide</div>';
 }
 
 function renderTable(){
   const tbody=document.getElementById('table-body');
-  let list=activeFilter==='all'?[...comments]
-    :['p0','p1','p2'].includes(activeFilter)
-      ?comments.filter(c=>(c.priority||'p2')===activeFilter)
-      :comments.filter(c=>c.tag===activeFilter);
+  let list=[...comments];
+  if(activeFilter==='done') list=list.filter(c=>c.status==='done');
+  else if(activeFilter==='discard') list=list.filter(c=>c.status==='discard');
+  else if(activeFilter==='p0'||activeFilter==='p1'||activeFilter==='p2') list=list.filter(c=>(c.priority||'p2')===activeFilter);
+  else if(activeFilter!=='all') list=list.filter(c=>c.tag===activeFilter);
 
   list.sort((a,b)=>{
     const ai=a.slide_id&&a.slide_id.startsWith('idx:')?parseInt(a.slide_id.slice(4)):999;
     const bi=b.slide_id&&b.slide_id.startsWith('idx:')?parseInt(b.slide_id.slice(4)):999;
     const po={p0:0,p1:1,p2:2};
-    return ai-bi||((po[a.priority||'p2']||0)-(po[b.priority||'p2']||0))||new Date(a.created_at)-new Date(b.created_at);
+    return ai-bi||(po[a.priority||'p2']||0)-(po[b.priority||'p2']||0)||new Date(a.created_at)-new Date(b.created_at);
   });
 
   if(!list.length){
@@ -515,43 +463,34 @@ function renderTable(){
   tbody.innerHTML=list.map(c=>{
     const sIdx=c.slide_id&&c.slide_id.startsWith('idx:')?parseInt(c.slide_id.slice(4)):-1;
     const s=sIdx>=0?slides[sIdx]:null;
-    const tm=TAG_META[c.tag]||{label:c.tag||'—',bg:'#eef1f5',color:'#50617A'};
+    const tm=TAG_META[c.tag]||{label:c.tag||'—',cls:'pill-ghost'};
     const pm=PRI_META[c.priority||'p2'];
     const col=getColor(c.author);
     const time=new Date(c.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     const canEdit=isAdmin||c.author===reviewer;
+    const status=c.status||'';
+    const rowCls=status==='done'?'row-done':status==='discard'?'row-discard':'';
 
-    // category select
-    const tagOpts=Object.entries(TAG_META).map(([k,v])=>'<option value="'+k+'"'+(c.tag===k?' selected':'')+'>'+v.label+'</option>').join('');
-    const tagCell=canEdit
-      ?'<select class="field-select" data-cid="'+c.id+'" data-field="tag">'+tagOpts+'</select>'
-      :'<span style="font-size:13px">'+esc(tm.label)+'</span>';
-
-    // priority select
-    const priOpts=Object.entries(PRI_META).map(([k,v])=>'<option value="'+k+'"'+((c.priority||'p2')===k?' selected':'')+'>'+v.label+'</option>').join('');
-    const priCell=canEdit
-      ?'<select class="field-select" data-cid="'+c.id+'" data-field="priority">'+priOpts+'</select>'
-      :'<span style="font-size:13px">'+(c.priority||'p2').toUpperCase()+'</span>';
-
-    // reactions
     const r=reactionsMap[c.id]||{};
     const rxns=REACTIONS.map(function(emoji){
       const set=r[emoji]||new Set();
-      const cls='rxn-btn'+(set.has(reviewer)?' reacted':'');
-      const cnt=set.size?'<span class="rxn-count">'+set.size+'</span>':'';
-      return '<button class="'+cls+'" data-cid="'+c.id+'" data-emoji="'+emoji+'">'+emoji+cnt+'</button>';
+      return '<button class="rxn-btn'+(set.has(reviewer)?' reacted':'')+'" data-cid="'+c.id+'" data-emoji="'+emoji+'">'+emoji+(set.size?'<span class="rxn-count">'+set.size+'</span>':'')+'</button>';
     }).join('');
 
-    // feedback cell
-    const feedbackCell='<div class="comment-text" id="ct-'+c.id+'"><div>'+esc(c.text)+'</div>'
-      +(canEdit?'<button class="edit-btn" data-cid="'+c.id+'">edit</button>':'')
-      +'<div class="reactions">'+rxns+'</div></div>';
+    const statusBtns=canEdit
+      ?'<div class="status-btns">'
+        +'<button class="status-btn'+(status==='done'?' active-done':'')+'" data-cid="'+c.id+'" data-action="done" title="Mark as done">✓</button>'
+        +'<button class="status-btn'+(status==='discard'?' active-discard':'')+'" data-cid="'+c.id+'" data-action="discard" title="Disregard">✕</button>'
+        +'</div>'
+      :'';
 
-    return '<tr id="row-'+c.id+'">'
+    return '<tr id="row-'+c.id+'" class="'+rowCls+'">'
       +'<td class="thumb-cell">'+(s?'<img src="'+s.src+'" alt="Slide '+(sIdx+1)+'"/><div class="snum">Slide '+(sIdx+1)+'</div>':'<span style="color:var(--faint)">—</span>')+'</td>'
-      +'<td>'+tagCell+'</td>'
-      +'<td>'+priCell+'</td>'
-      +'<td>'+feedbackCell+'</td>'
+      +'<td><span class="pill '+tm.cls+'" style="pointer-events:none">'+esc(tm.label)+'</span></td>'
+      +'<td><span class="pill '+pm.cls+'" style="pointer-events:none">'+pm.label+'</span></td>'
+      +'<td><div class="comment-text">'+esc(c.text)+'</div>'
+        +'<div class="reactions">'+rxns+'</div>'
+        +statusBtns+'</td>'
       +'<td><div class="author-chip"><div class="avatar" style="background:'+col.bg+';color:'+col.color+'">'+initials(c.author)+'</div><span class="author-name">'+esc(c.author)+'</span></div></td>'
       +'<td><span class="ts">'+time+'</span></td>'
       +'<td>'+(canEdit?'<button class="del-btn" data-cid="'+c.id+'">✕</button>':'')+'</td>'
@@ -565,85 +504,53 @@ function updateStats(){
   document.getElementById('stat-flagged').textContent=new Set(comments.filter(c=>c.slide_id).map(c=>c.slide_id)).size;
 }
 
-// ── TABLE EVENTS (delegation) ─────────────────────────────────────────────
-document.getElementById('table-body').addEventListener('change',async function(e){
-  const sel=e.target.closest('.field-select');
-  if(!sel)return;
-  const cid=sel.dataset.cid;
-  const field=sel.dataset.field;
-  const value=sel.value;
-  // stop polling, patch, reload, restart
-  clearInterval(pollingInterval);
-  await dbPatch('comments',cid,{[field]:value});
-  await loadComments();
-  pollingInterval=setInterval(pollUpdates,2500);
-});
-
-document.getElementById('table-body').addEventListener('click',function(e){
-  const editBtn=e.target.closest('.edit-btn');
-  if(editBtn){startEdit(editBtn.dataset.cid);return;}
-  const delBtn=e.target.closest('.del-btn');
-  if(delBtn){delComment(delBtn.dataset.cid);return;}
-  const rxnBtn=e.target.closest('.rxn-btn');
-  if(rxnBtn){toggleReaction(rxnBtn.dataset.cid,rxnBtn.dataset.emoji);return;}
-});
-
-function startEdit(cid){
-  const c=comments.find(x=>x.id===cid);
-  if(!c)return;
-  const cell=document.getElementById('ct-'+cid);
-  if(!cell)return;
-  cell.innerHTML='<textarea class="edit-textarea" id="edit-'+cid+'">'+esc(c.text)+'</textarea>'
-    +'<div><button class="save-btn" data-cid="'+cid+'">Save</button>'
-    +'<button class="cancel-btn" data-cid="'+cid+'">Cancel</button></div>';
-  const ta=document.getElementById('edit-'+cid);
-  ta.focus();ta.select();
-}
-
+// TABLE EVENTS
 document.getElementById('table-body').addEventListener('click',async function(e){
-  const saveBtn=e.target.closest('.save-btn');
-  if(saveBtn){
-    const cid=saveBtn.dataset.cid;
-    const ta=document.getElementById('edit-'+cid);
-    if(!ta)return;
-    const newText=ta.value.trim();
-    if(!newText)return;
-    clearInterval(pollingInterval);
-    await dbPatch('comments',cid,{text:newText});
-    await loadComments();
-    pollingInterval=setInterval(pollUpdates,2500);
-    return;
+  // reactions
+  const rxn=e.target.closest('.rxn-btn');
+  if(rxn){
+    const cid=rxn.dataset.cid,emoji=rxn.dataset.emoji;
+    if(!reactionsMap[cid])reactionsMap[cid]={};
+    if(!reactionsMap[cid][emoji])reactionsMap[cid][emoji]=new Set();
+    const set=reactionsMap[cid][emoji];
+    if(set.has(reviewer))set.delete(reviewer);else set.add(reviewer);
+    renderTable();return;
   }
-  const cancelBtn=e.target.closest('.cancel-btn');
-  if(cancelBtn){renderTable();return;}
+  // delete
+  const del=e.target.closest('.del-btn');
+  if(del){
+    pollPaused=true;
+    await dbDelete('comments',del.dataset.cid);
+    await loadComments();
+    pollPaused=false;return;
+  }
+  // status (done / discard)
+  const statusBtn=e.target.closest('.status-btn');
+  if(statusBtn){
+    const cid=statusBtn.dataset.cid;
+    const action=statusBtn.dataset.action;
+    const c=comments.find(x=>x.id===cid);
+    if(!c)return;
+    // toggle: if already this status, clear it
+    const newStatus=c.status===action?'':action;
+    pollPaused=true;
+    await dbPatch('comments',cid,{status:newStatus});
+    await loadComments();
+    pollPaused=false;return;
+  }
 });
 
-function toggleReaction(cid,emoji){
-  if(!reactionsMap[cid])reactionsMap[cid]={};
-  if(!reactionsMap[cid][emoji])reactionsMap[cid][emoji]=new Set();
-  const set=reactionsMap[cid][emoji];
-  if(set.has(reviewer))set.delete(reviewer);else set.add(reviewer);
-  renderTable();
-}
-
-async function delComment(cid){
-  clearInterval(pollingInterval);
-  await dbDelete('comments',cid);
-  await loadComments();
-  pollingInterval=setInterval(pollUpdates,2500);
-}
-
-// ── FILTER ────────────────────────────────────────────────────────────────
+// FILTER
 document.getElementById('filter-row').addEventListener('click',function(e){
-  const btn=e.target.closest('.filter-btn');
+  const btn=e.target.closest('.filter-pill');
   if(!btn)return;
   activeFilter=btn.dataset.filter;
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.filter-pill').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderTable();
 });
 
-// ── SIDEBAR CLICK ─────────────────────────────────────────────────────────
+// SIDEBAR CLICK
 document.getElementById('slides-list').addEventListener('click',function(e){
   const item=e.target.closest('.slide-item');
   if(!item)return;
@@ -651,69 +558,74 @@ document.getElementById('slides-list').addEventListener('click',function(e){
   updatePreview();
   document.getElementById('comment-input').focus();
 });
-
 document.getElementById('slide-select').addEventListener('change',updatePreview);
 
-// ── SUBMIT COMMENT ────────────────────────────────────────────────────────
-document.getElementById('btn-submit').addEventListener('click',submitComment);
-document.getElementById('comment-input').addEventListener('keydown',e=>{
-  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitComment();}
+// PILL SELECTORS in input bar
+document.getElementById('comment-input').closest('.input-main').addEventListener('click',function(e){
+  const p=e.target.closest('.sel-pill');
+  if(!p)return;
+  const type=p.dataset.type;
+  const val=p.dataset.val;
+  // deselect siblings
+  document.querySelectorAll('.sel-pill[data-type="'+type+'"]').forEach(x=>x.classList.remove('selected'));
+  p.classList.add('selected');
+  if(type==='tag')selTag=val;
+  else selPriority=val;
 });
+
+// SUBMIT
+document.getElementById('btn-submit').addEventListener('click',submitComment);
+document.getElementById('comment-input').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submitComment();}});
+
 async function submitComment(){
   const text=document.getElementById('comment-input').value.trim();
   const idx=document.getElementById('slide-select').value;
-  const tag=document.getElementById('tag-select').value;
-  const priority=document.getElementById('priority-select').value;
   if(!text)return;
   const btn=document.getElementById('btn-submit');
   btn.disabled=true;
-  const body={session_id:sessionId,slide_id:idx!==''?'idx:'+idx:null,tag,priority,text,author:reviewer};
+  const body={session_id:sessionId,slide_id:idx!==''?'idx:'+idx:null,tag:selTag,priority:selPriority,text,author:reviewer,status:''};
   await dbPost('comments',body);
   document.getElementById('comment-input').value='';
   btn.disabled=false;
+  pollPaused=true;
   await loadComments();
+  pollPaused=false;
 }
 
-// ── SHARE ─────────────────────────────────────────────────────────────────
+// SHARE
 document.getElementById('btn-share').addEventListener('click',function(){
   const url=window.location.href.split('?')[0]+'?join='+sessionId;
   navigator.clipboard.writeText(url).then(()=>toast('Join link copied!'));
 });
 
-// auto-join from URL
-const urlJoin=new URLSearchParams(window.location.search).get('join');
-if(urlJoin)document.getElementById('lobby-code').value=urlJoin;
-
-// ── CONSOLIDATED VIEW ─────────────────────────────────────────────────────
+// FULL VIEW
 document.getElementById('btn-full-view').addEventListener('click',function(){
   document.getElementById('con-title').textContent=(sessionTitle||'Rehearsal')+' — full view';
-  const body=document.getElementById('consolidated-body');
-  if(!slides.length){body.innerHTML='<div style="padding:40px;text-align:center;color:var(--faint)">No slides loaded yet.</div>';document.getElementById('consolidated-overlay').classList.add('open');return;}
+  const body=document.getElementById('con-body');
+  if(!slides.length){body.innerHTML='<div style="padding:40px;text-align:center;color:var(--faint)">No slides loaded yet.</div>';document.getElementById('overlay-con').classList.add('open');return;}
   body.innerHTML=slides.map((s,i)=>{
     const sc=comments.filter(c=>c.slide_id==='idx:'+i).sort((a,b)=>{const po={p0:0,p1:1,p2:2};return (po[a.priority||'p2']||0)-(po[b.priority||'p2']||0)||new Date(a.created_at)-new Date(b.created_at);});
-    const commentRows=sc.length?sc.map(c=>{
-      const tm=TAG_META[c.tag]||{label:c.tag,bg:'#eef1f5',color:'#50617A'};
+    const rows=sc.length?sc.map(c=>{
+      const tm=TAG_META[c.tag]||{label:c.tag,cls:'pill-ghost'};
       const pm=PRI_META[c.priority||'p2'];
       const col=getColor(c.author);
       return '<div class="con-comment"><div class="avatar" style="background:'+col.bg+';color:'+col.color+';width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;flex-shrink:0">'+initials(c.author)+'</div>'
-        +'<div class="con-body"><div class="con-top"><span class="con-author">'+esc(c.author)+'</span>'
-        +'<span class="con-time">'+new Date(c.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</span>'
-        +'<span class="con-tag" style="background:'+tm.bg+';color:'+tm.color+'">'+tm.label+'</span>'
-        +'<span class="con-tag" style="background:'+pm.bg+';color:'+pm.color+'">'+pm.label+'</span>'
+        +'<div class="con-body"><div class="con-top"><span class="con-author">'+esc(c.author)+'</span><span class="con-time">'+new Date(c.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</span>'
+        +'<span class="pill '+tm.cls+'" style="pointer-events:none;font-size:10px;padding:2px 8px">'+esc(tm.label)+'</span>'
+        +'<span class="pill '+pm.cls+'" style="pointer-events:none;font-size:10px;padding:2px 8px">'+pm.label+'</span>'
+        +(c.status?'<span class="pill '+(c.status==='done'?'pill-done':'pill-discard')+'" style="pointer-events:none;font-size:10px;padding:2px 8px">'+(c.status==='done'?'✓ Done':'✕ Disregarded')+'</span>':'')
         +'</div><div class="con-text">'+esc(c.text)+'</div></div></div>';
     }).join(''):'<p class="no-fb">No feedback on this slide</p>';
     return '<div class="slide-block"><div class="slide-block-header">'
-      +'<div class="slide-block-thumb">'+(s.src?'<img src="'+s.src+'"/>':`<div style="aspect-ratio:16/9;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--faint)">No image</div>`)+'</div>'
-      +'<div class="slide-block-meta"><div class="slide-block-num">Slide '+(i+1)+' of '+slides.length+'</div><div class="slide-block-name">'+esc(s.name)+'</div>'
-      +'<div style="font-size:12px;color:var(--muted);margin-top:4px">'+sc.length+' comment'+(sc.length!==1?'s':'')+'</div></div></div>'
-      +commentRows+'</div>';
+      +'<div class="slide-block-thumb">'+(s.src?'<img src="'+s.src+'"/>':'<div style="aspect-ratio:16/9;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--faint)">No image</div>')+'</div>'
+      +'<div class="slide-block-meta"><div class="slide-block-num">Slide '+(i+1)+' of '+slides.length+'</div><div class="slide-block-name">'+esc(s.name)+'</div><div style="font-size:12px;color:var(--muted);margin-top:4px">'+sc.length+' comment'+(sc.length!==1?'s':'')+'</div></div></div>'+rows+'</div>';
   }).join('');
-  document.getElementById('consolidated-overlay').classList.add('open');
+  document.getElementById('overlay-con').classList.add('open');
 });
-document.getElementById('btn-close-con').addEventListener('click',()=>document.getElementById('consolidated-overlay').classList.remove('open'));
-document.getElementById('consolidated-overlay').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+document.getElementById('btn-close-con').addEventListener('click',()=>document.getElementById('overlay-con').classList.remove('open'));
+document.getElementById('overlay-con').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
 
-// ── EXPORT ────────────────────────────────────────────────────────────────
+// EXPORT
 document.getElementById('btn-export').addEventListener('click',function(){
   let txt='REHEARSAL FEEDBACK\n'+sessionTitle+'\nSession: '+sessionId+'\n'+'─'.repeat(36)+'\n\n';
   slides.forEach((s,i)=>{
@@ -721,10 +633,11 @@ document.getElementById('btn-export').addEventListener('click',function(){
     txt+='SLIDE '+(i+1)+' — '+s.name+'\n';
     if(!sc.length)txt+='  (no feedback)\n';
     else sc.forEach(c=>{
-      const tm=TAG_META[c.tag]||{label:c.tag||'general'};
+      const tm=TAG_META[c.tag]||{label:c.tag||'—'};
       const pm=PRI_META[c.priority||'p2'];
       const time=new Date(c.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-      txt+='  ['+pm.label+']['+tm.label.toUpperCase()+'] '+c.author+' ('+time+'): '+c.text+'\n';
+      const stat=c.status?(' ['+c.status.toUpperCase()+']'):'';
+      txt+='  ['+pm.label+']['+tm.label.toUpperCase()+']'+stat+' '+c.author+' ('+time+'): '+c.text+'\n';
     });
     txt+='\n';
   });
@@ -733,12 +646,7 @@ document.getElementById('btn-export').addEventListener('click',function(){
   document.getElementById('export-modal').classList.add('open');
 });
 document.getElementById('btn-close-export').addEventListener('click',()=>document.getElementById('export-modal').classList.remove('open'));
-document.getElementById('btn-copy-export').addEventListener('click',function(){
-  document.getElementById('export-text').select();
-  document.execCommand('copy');
-  this.textContent='Copied!';
-  setTimeout(()=>this.textContent='Copy to clipboard',1800);
-});
+document.getElementById('btn-copy-export').addEventListener('click',function(){document.getElementById('export-text').select();document.execCommand('copy');this.textContent='Copied!';setTimeout(()=>this.textContent='Copy to clipboard',1800);});
 document.getElementById('export-modal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
 </script>
 </body>

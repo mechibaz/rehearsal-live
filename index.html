@@ -804,12 +804,13 @@ async function saveEdit(cid){
 async function updateCommentField(cid,field,value){
   const c=comments.find(x=>x.id===cid);
   if(!c)return;
+  // update local data first
   c[field]=value;
-  // save to DB immediately
+  // save to DB and wait for it
   const update={};update[field]=value;
-  sbPatch('comments',{id:cid},update);
-  // re-render after tick - select has already committed its value so it won't fight us
-  setTimeout(()=>renderTable(), 0);
+  await sbPatch('comments',{id:cid},update);
+  // re-render now that DB is updated - filter will work correctly
+  renderTable();
 }
 
 // ── CONSOLIDATED VIEW (improved) ──────────────────────────────────────────

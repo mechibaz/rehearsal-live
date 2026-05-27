@@ -795,22 +795,24 @@ async function saveEdit(cid){
   if(!ta)return;
   const newText=ta.value.trim();
   if(!newText)return;
-  const c=comments.find(x=>x.id===cid);
-  if(c)c.text=newText;
+  clearInterval(pollingInterval);
   await sbPatch('comments',{id:cid},{text:newText});
-  renderTable();
+  await loadComments();
+  startPolling();
 }
 
 async function updateCommentField(cid,field,value){
   const c=comments.find(x=>x.id===cid);
   if(!c)return;
-  // update local data first
-  c[field]=value;
-  // save to DB and wait for it
+  // stop polling so it doesn't overwrite our change
+  clearInterval(pollingInterval);
+  // save to DB
   const update={};update[field]=value;
   await sbPatch('comments',{id:cid},update);
-  // re-render now that DB is updated - filter will work correctly
-  renderTable();
+  // reload fresh from DB so local state matches server
+  await loadComments();
+  // restart polling
+  startPolling();
 }
 
 // ── CONSOLIDATED VIEW (improved) ──────────────────────────────────────────

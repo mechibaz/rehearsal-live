@@ -198,6 +198,11 @@ td{padding:10px 14px;vertical-align:top}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:13px;padding:10px 20px;border-radius:99px;opacity:0;transition:opacity 0.2s;pointer-events:none;z-index:999;white-space:nowrap}
 .toast.show{opacity:1}
 ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:99px}
+.inline-ta{width:100%;font-size:13px;padding:7px 9px;border-radius:6px;border:1.5px solid var(--accent);background:var(--surface);color:var(--text);resize:vertical;outline:none;font-family:inherit;min-height:56px;line-height:1.5}
+.save-inline-btn{font-size:11px;padding:4px 12px;border-radius:4px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-family:inherit}
+.cancel-inline-btn{font-size:11px;padding:4px 12px;border-radius:4px;border:1px solid var(--border-strong);background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;margin-left:4px}
+.comment-text[title]{border-bottom:1px dashed var(--border-strong);}
+.comment-text[title]:hover{border-bottom-color:var(--accent);}
 </style>
 </head>
 <body>
@@ -493,7 +498,10 @@ function renderTable(){
       +'<td class="thumb-cell">'+(s?'<img src="'+s.src+'" alt="Slide '+(sIdx+1)+'"/><div class="snum">Slide '+(sIdx+1)+'</div>':'<span style="color:var(--faint)">—</span>')+'</td>'
       +'<td>'+(canEdit?'<select class="pill-select '+tm.cls+'" data-cid="'+c.id+'" data-field="tag">'+Object.entries(TAG_META).map(([k,v])=>'<option value="'+k+'"'+(c.tag===k?' selected':'')+'>'+v.label+'</option>').join('')+'</select>':'<span class="pill '+tm.cls+'" style="pointer-events:none">'+esc(tm.label)+'</span>')+'</td>'
       +'<td>'+(canEdit?'<select class="pill-select '+pm.cls+'" data-cid="'+c.id+'" data-field="priority">'+Object.entries(PRI_META).map(([k,v])=>'<option value="'+k+'"'+((c.priority||'p2')===k?' selected':'')+'>'+v.label+'</option>').join('')+'</select>':'<span class="pill '+pm.cls+'" style="pointer-events:none">'+pm.label+'</span>')+'</td>'
-      +'<td><div class="comment-text">'+esc(c.text)+'</div>'
+      +'<td>'
+        +(canEdit
+          ?'<div class="comment-text editable-text" id="ct-'+c.id+'" data-cid="'+c.id+'" title="Double-click to edit" style="cursor:text;min-height:24px">'+esc(c.text)+'</div>'
+          :'<div class="comment-text">'+esc(c.text)+'</div>')
         +'<div class="reactions">'+rxns+'</div></td>'
       +'<td><div class="author-chip"><div class="avatar" style="background:'+col.bg+';color:'+col.color+'">'+initials(c.author)+'</div><span class="author-name">'+esc(c.author)+'</span></div></td>'
       +'<td><span class="ts">'+time+'</span></td>'
@@ -513,6 +521,11 @@ function updateStats(){
 }
 
 // TABLE EVENTS
+document.getElementById('table-body').addEventListener('dblclick',function(e){
+  const div=e.target.closest('.editable-text');
+  if(div)startInlineEdit(div.dataset.cid);
+});
+
 document.getElementById('table-body').addEventListener('change',async function(e){
   const sel=e.target.closest('.pill-select');
   if(!sel)return;
@@ -666,6 +679,40 @@ document.getElementById('btn-export').addEventListener('click',function(){
 document.getElementById('btn-close-export').addEventListener('click',()=>document.getElementById('export-modal').classList.remove('open'));
 document.getElementById('btn-copy-export').addEventListener('click',function(){document.getElementById('export-text').select();document.execCommand('copy');this.textContent='Copied!';setTimeout(()=>this.textContent='Copy to clipboard',1800);});
 document.getElementById('export-modal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+
+function startInlineEdit(cid){
+  const div=document.getElementById('ct-'+cid);
+  if(!div||div.querySelector('textarea'))return;
+  const c=comments.find(x=>x.id===cid);
+  if(!c)return;
+  div.innerHTML='<textarea class="inline-ta" id="ita-'+cid+'">'+esc(c.text)+'</textarea>'
+    +'<div style="display:flex;gap:6px;margin-top:5px">'
+    +'<button class="save-inline-btn" data-cid="'+cid+'">Save</button>'
+    +'<button class="cancel-inline-btn" data-cid="'+cid+'">Cancel</button>'
+    +'</div>';
+  const ta=document.getElementById('ita-'+cid);
+  ta.focus();ta.select();
+  ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();saveInlineEdit(cid);}if(e.key==='Escape')renderTable();});
+}
+
+async function saveInlineEdit(cid){
+  const ta=document.getElementById('ita-'+cid);
+  if(!ta)return;
+  const newText=ta.value.trim();
+  if(!newText)return;
+  pollPaused=true;
+  await dbPatch('comments',cid,{text:newText});
+  await loadComments();
+  pollPaused=false;
+}
+
+// save/cancel inline edit via delegation
+document.getElementById('table-body').addEventListener('click',async function(e){
+  const save=e.target.closest('.save-inline-btn');
+  if(save){await saveInlineEdit(save.dataset.cid);return;}
+  const cancel=e.target.closest('.cancel-inline-btn');
+  if(cancel){renderTable();return;}
+});
 </script>
 </body>
 </html>

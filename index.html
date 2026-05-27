@@ -196,6 +196,9 @@ td{padding:9px 13px;vertical-align:top}
 .inline-select:focus{border-color:var(--accent)}
 .pill-select{font-size:12px;font-weight:500;padding:5px 10px;border-radius:6px;border:1px solid var(--border-strong);cursor:pointer;outline:none;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;width:100%;max-width:130px;}
 .pill-select:focus{border-color:var(--accent)}
+.field-select{font-size:13px;padding:6px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;outline:none;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;width:100%;}
+.field-select:focus{border-color:var(--accent);border-width:1.5px}
+.field-select:hover{border-color:var(--border-strong)}
 .edit-btn{font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;margin-top:4px;display:block;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}
 .edit-btn:hover{text-decoration:underline}
 .edit-textarea{width:100%;font-size:13px;padding:6px 8px;border-radius:6px;border:1px solid var(--accent);background:var(--surface);color:var(--text);resize:vertical;outline:none;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;min-height:60px;line-height:1.5}
@@ -647,16 +650,14 @@ function renderTable(){
     return`<tr id="row-${c.id}">
       <td class="thumb-cell">${s?`<img src="${s.src}" alt="Slide ${sIdx+1}"/><div class="snum">Slide ${sIdx+1}</div>`:'<span style="color:var(--faint);font-size:10px">—</span>'}</td>
       <td>${(()=>{
-        const badge='<span id="tag-badge-'+c.id+'" class="tag-pill" style="background:'+tm.bg+';color:'+tm.color+';display:block;margin-bottom:5px">'+tm.label+'</span>';
-        if(!canEdit) return badge;
         const tagOpts=Object.entries(TAG_META).map(([k,v])=>'<option value="'+k+'"'+(c.tag===k?' selected':'')+'>'+v.label+'</option>').join('');
-        return badge+'<select class="pill-select" data-cid="'+c.id+'" data-field="tag" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">'+tagOpts+'</select>';
+        if(!canEdit) return '<span style="font-size:13px;color:var(--text)">'+tm.label+'</span>';
+        return '<select class="field-select" data-cid="'+c.id+'" data-field="tag" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">'+tagOpts+'</select>';
       })()}</td>
       <td>${(()=>{
-        const badge='<span id="pri-badge-'+c.id+'" class="tag-pill" style="background:'+pm.bg+';color:'+pm.color+';display:block;margin-bottom:5px">'+pm.label+'</span>';
-        if(!canEdit) return badge;
         const priOpts=Object.entries(PRIORITY_META).map(([k,v])=>'<option value="'+k+'"'+((c.priority||'p2')===k?' selected':'')+'>'+v.label+'</option>').join('');
-        return badge+'<select class="pill-select" data-cid="'+c.id+'" data-field="priority" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">'+priOpts+'</select>';
+        if(!canEdit) return '<span style="font-size:13px;color:var(--text)">'+(c.priority||'p2').toUpperCase()+'</span>';
+        return '<select class="field-select" data-cid="'+c.id+'" data-field="priority" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">'+priOpts+'</select>';
       })()}</td>
       <td class="comment-text" id="ct-${c.id}">
         <div class="comment-display">${escHtml(c.text)}</div>
@@ -804,14 +805,11 @@ async function updateCommentField(cid,field,value){
   const c=comments.find(x=>x.id===cid);
   if(!c)return;
   c[field]=value;
-  // update the badge above the select
-  const meta=field==='tag'?(TAG_META[value]||TAG_META.production):(PRIORITY_META[value]||PRIORITY_META.p2);
-  const prefix=field==='tag'?'tag-badge-':'pri-badge-';
-  const badge=document.getElementById(prefix+cid);
-  if(badge){badge.textContent=meta.label;badge.style.background=meta.bg;badge.style.color=meta.color;}
-  // save to DB
+  // save to DB immediately
   const update={};update[field]=value;
   sbPatch('comments',{id:cid},update);
+  // re-render after tick - select has already committed its value so it won't fight us
+  setTimeout(()=>renderTable(), 0);
 }
 
 // ── CONSOLIDATED VIEW (improved) ──────────────────────────────────────────

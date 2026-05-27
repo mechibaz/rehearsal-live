@@ -194,6 +194,8 @@ td{padding:9px 13px;vertical-align:top}
 
 .inline-select{font-size:11px;padding:2px 6px;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;outline:none;max-width:110px;margin-top:3px}
 .inline-select:focus{border-color:var(--accent)}
+.pill-select{font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px;border:1.5px solid;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;letter-spacing:0.04em;text-transform:uppercase;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;}
+.pill-select:focus{opacity:0.85}
 .edit-btn{font-size:10px;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;margin-top:4px;display:block;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif}
 .edit-btn:hover{text-decoration:underline}
 .edit-textarea{width:100%;font-size:13px;padding:6px 8px;border-radius:6px;border:1px solid var(--accent);background:var(--surface);color:var(--text);resize:vertical;outline:none;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;min-height:60px;line-height:1.5}
@@ -645,14 +647,14 @@ function renderTable(){
     return`<tr id="row-${c.id}">
       <td class="thumb-cell">${s?`<img src="${s.src}" alt="Slide ${sIdx+1}"/><div class="snum">Slide ${sIdx+1}</div>`:'<span style="color:var(--faint);font-size:10px">—</span>'}</td>
       <td>${(()=>{
+        if(!canEdit) return '<span class="tag-pill" style="background:'+tm.bg+';color:'+tm.color+'">'+tm.label+'</span>';
         const tagOpts=Object.entries(TAG_META).map(([k,v])=>'<option value="'+k+'"'+(c.tag===k?' selected':'')+'>'+v.label+'</option>').join('');
-        const tagSel=canEdit?'<div style="margin-top:5px"><select class="inline-select" data-cid="'+c.id+'" data-field="tag" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">'+tagOpts+'</select></div>':'';
-        return '<span class="tag-pill" id="tag-pill-'+c.id+'" style="background:'+tm.bg+';color:'+tm.color+'">'+tm.label+'</span>'+tagSel;
+        return '<select class="pill-select" style="background:'+tm.bg+';color:'+tm.color+';border-color:'+tm.color+'" data-cid="'+c.id+'" data-field="tag" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">'+tagOpts+'</select>';
       })()}</td>
       <td>${(()=>{
+        if(!canEdit) return '<span class="tag-pill" style="background:'+pm.bg+';color:'+pm.color+'">'+pm.label+'</span>';
         const priOpts=Object.entries(PRIORITY_META).map(([k,v])=>'<option value="'+k+'"'+((c.priority||'p2')===k?' selected':'')+'>'+v.label+'</option>').join('');
-        const priSel=canEdit?'<div style="margin-top:5px"><select class="inline-select" data-cid="'+c.id+'" data-field="priority" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">'+priOpts+'</select></div>':'';
-        return '<span class="tag-pill" id="pri-pill-'+c.id+'" style="background:'+pm.bg+';color:'+pm.color+'">'+pm.label+'</span>'+priSel;
+        return '<select class="pill-select" style="background:'+pm.bg+';color:'+pm.color+';border-color:'+pm.color+'" data-cid="'+c.id+'" data-field="priority" onchange="updateCommentField(this.dataset.cid,this.dataset.field,this.value)">'+priOpts+'</select>';
       })()}</td>
       <td class="comment-text" id="ct-${c.id}">
         <div class="comment-display">${escHtml(c.text)}</div>
@@ -800,11 +802,13 @@ async function updateCommentField(cid,field,value){
   const c=comments.find(x=>x.id===cid);
   if(!c)return;
   c[field]=value;
+  // update the select's own color immediately
+  const meta=field==='tag'?(TAG_META[value]||TAG_META.production):(PRIORITY_META[value]||PRIORITY_META.p2);
+  const sel=document.querySelector('select.pill-select[data-cid="'+cid+'"][data-field="'+field+'"]');
+  if(sel){sel.style.background=meta.bg;sel.style.color=meta.color;sel.style.borderColor=meta.color;}
   // save to DB
   const update={};update[field]=value;
   sbPatch('comments',{id:cid},update);
-  // re-render after a tick so browser doesn't fight us
-  setTimeout(()=>renderTable(), 0);
 }
 
 // ── CONSOLIDATED VIEW (improved) ──────────────────────────────────────────

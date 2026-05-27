@@ -135,6 +135,8 @@ td{padding:10px 14px;vertical-align:top}
 .rxn-btn:hover,.rxn-btn.reacted{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
 .rxn-count{font-size:11px;font-weight:600}
 .empty-row td{text-align:center;padding:48px;color:var(--faint);font-size:11px;letter-spacing:0.06em}
+.pill-select{display:inline-flex;font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;border:1.5px solid transparent;cursor:pointer;font-family:inherit;letter-spacing:0.02em;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2350617A'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;padding-right:20px;}
+.pill-select:focus{box-shadow:0 0 0 2px currentColor;}
 
 /* INPUT BAR */
 .input-bar{background:var(--surface);border-top:1px solid var(--border);padding:14px 20px;display:flex;gap:10px;align-items:flex-start;flex-shrink:0}
@@ -477,23 +479,21 @@ function renderTable(){
       return '<button class="rxn-btn'+(set.has(reviewer)?' reacted':'')+'" data-cid="'+c.id+'" data-emoji="'+emoji+'">'+emoji+(set.size?'<span class="rxn-count">'+set.size+'</span>':'')+'</button>';
     }).join('');
 
-    const statusBtns=canEdit
-      ?'<div class="status-btns">'
-        +'<button class="status-btn'+(status==='done'?' active-done':'')+'" data-cid="'+c.id+'" data-action="done" title="Mark as done">✓</button>'
-        +'<button class="status-btn'+(status==='discard'?' active-discard':'')+'" data-cid="'+c.id+'" data-action="discard" title="Disregard">✕</button>'
-        +'</div>'
-      :'';
+
 
     return '<tr id="row-'+c.id+'" class="'+rowCls+'">'
       +'<td class="thumb-cell">'+(s?'<img src="'+s.src+'" alt="Slide '+(sIdx+1)+'"/><div class="snum">Slide '+(sIdx+1)+'</div>':'<span style="color:var(--faint)">—</span>')+'</td>'
-      +'<td><span class="pill '+tm.cls+'" style="pointer-events:none">'+esc(tm.label)+'</span></td>'
-      +'<td><span class="pill '+pm.cls+'" style="pointer-events:none">'+pm.label+'</span></td>'
+      +'<td>'+(canEdit?'<select class="pill-select '+tm.cls+'" data-cid="'+c.id+'" data-field="tag">'+Object.entries(TAG_META).map(([k,v])=>'<option value="'+k+'"'+(c.tag===k?' selected':'')+'>'+v.label+'</option>').join('')+'</select>':'<span class="pill '+tm.cls+'" style="pointer-events:none">'+esc(tm.label)+'</span>')+'</td>'
+      +'<td>'+(canEdit?'<select class="pill-select '+pm.cls+'" data-cid="'+c.id+'" data-field="priority">'+Object.entries(PRI_META).map(([k,v])=>'<option value="'+k+'"'+((c.priority||'p2')===k?' selected':'')+'>'+v.label+'</option>').join('')+'</select>':'<span class="pill '+pm.cls+'" style="pointer-events:none">'+pm.label+'</span>')+'</td>'
       +'<td><div class="comment-text">'+esc(c.text)+'</div>'
-        +'<div class="reactions">'+rxns+'</div>'
-        +statusBtns+'</td>'
+        +'<div class="reactions">'+rxns+'</div></td>'
       +'<td><div class="author-chip"><div class="avatar" style="background:'+col.bg+';color:'+col.color+'">'+initials(c.author)+'</div><span class="author-name">'+esc(c.author)+'</span></div></td>'
       +'<td><span class="ts">'+time+'</span></td>'
-      +'<td>'+(canEdit?'<button class="del-btn" data-cid="'+c.id+'">✕</button>':'')+'</td>'
+      +'<td style="white-space:nowrap">'
+        +(canEdit?'<button class="status-btn'+(status==='done'?' active-done':'')+'" data-cid="'+c.id+'" data-action="done" title="Mark as done" style="margin-right:4px">✓</button>':'')
+        +(canEdit?'<button class="status-btn'+(status==='discard'?' active-discard':'')+'" data-cid="'+c.id+'" data-action="discard" title="Disregard" style="margin-right:4px">✕</button>':'')
+        +(canEdit?'<button class="del-btn" data-cid="'+c.id+'" title="Delete">🗑</button>':'')
+        +'</td>'
       +'</tr>';
   }).join('');
 }
@@ -505,6 +505,23 @@ function updateStats(){
 }
 
 // TABLE EVENTS
+document.getElementById('table-body').addEventListener('change',async function(e){
+  const sel=e.target.closest('.pill-select');
+  if(!sel)return;
+  const cid=sel.dataset.cid,field=sel.dataset.field,value=sel.value;
+  // update pill color class immediately
+  const allClasses=[...sel.classList].filter(c=>c.startsWith('pill-'));
+  allClasses.forEach(c=>sel.classList.remove(c));
+  sel.classList.add('pill-select');
+  const meta=field==='tag'?(TAG_META[value]||TAG_META.production):(PRI_META[value]||PRI_META.p2);
+  sel.classList.add(meta.cls);
+  // pause poll, patch, reload
+  pollPaused=true;
+  await dbPatch('comments',cid,{[field]:value});
+  await loadComments();
+  pollPaused=false;
+});
+
 document.getElementById('table-body').addEventListener('click',async function(e){
   // reactions
   const rxn=e.target.closest('.rxn-btn');
